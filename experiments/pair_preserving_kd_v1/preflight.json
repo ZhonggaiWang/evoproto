@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "checks": [
+    "probability_sum",
+    "untouched_classes_exact",
+    "selected_pair_sum",
+    "correction_gradient_locality_at_reference",
+    "hierarchy_full_KL_equivalence",
+    "teacher_BG_new_veto",
+    "absent_class_conditional_target",
+    "background_pair_swap",
+    "empty_ROI",
+    "8rank_unequal_support_empty_rank_global_value_gradient"
+  ],
+  "gradient_max_error": 4.3244439140721624e-09,
+  "value_error": 5.814945325255394e-08,
+  "sources": {
+    "pair_targets.py": "7597eb377d61d90d0cc4988507a483926548d42b80a5e30f1a05ae0992ab4a70",
+    "pair_loss.py": "2706e86202c227e8748e321344be1330a7ed89b876667b5ad0623eb053370027",
+    "test_pair.py": "31cd459da0fe6f34f885071aafcec3c9ac26ba8d36b29461315bcf23e0385e68"
+  }
+}

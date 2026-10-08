@@ -1,0 +1,18 @@
+{
+  "utc": "2026-10-04T15:03:19.508152+00:00",
+  "CPU_tests": {
+    "count": 14,
+    "passed": true,
+    "log_sha256": "f31758641774d9e963785eb6e2075a61b5fad50a735f2388076c085406a07087"
+  },
+  "DDP8": {
+    "loss_max_error": 0.0,
+    "main_parameter_gradient_max_error": 0.0,
+    "prototype_parameter_gradient_max_error": 0.0,
+    "log_sha256": "b83f164c08f2aa868b3de111309612035f7762159ed914f6b8892195186b2d8d"
+  },
+  "smoke_run": "/ML-vePFS/infra_rd/kun/others/wzg/workspace/evoproto/runs/confusion_guided_v1/guard_smoke/c_newaware_sep",
+  "smoke_training_and_eval": "passed",
+  "guard_module_sha256": "ae0f10660423a26315c0032b557e5c31a81289e5602de74f1a61317512b9a8b7",
+  "GT_used_in_training": false
+}

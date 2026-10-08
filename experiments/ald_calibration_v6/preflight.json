@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "gradient_error": 9.720679372549057e-09,
+  "value_error": 6.705522537231445e-08,
+  "checks": [
+    "old16_logits_exact",
+    "all21_semantic_directions_preserved",
+    "residual_checkpoint_roundtrip",
+    "fixed_eligibility_normalization",
+    "known_absence_negative_gradient",
+    "all_classes_allowed_zero_gradient",
+    "8rank_uneven_support_empty_rank_loss_gradient"
+  ],
+  "sources": {
+    "residual.py": "b5d91fbc66fd79f32ce8b5d368977ea863d492f550f1b1e49e152f17e4ab1d52",
+    "losses.py": "4310c411e3bfa40662adb0a5254630508eecd2cdb23ee9da2c109077fa522d4b",
+    "test_ald.py": "7116c3e8b5fdce7de57c5d99a5ad9e43d6ca8d01483ebe018e548b90677a019e"
+  }
+}

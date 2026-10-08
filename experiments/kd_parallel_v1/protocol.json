@@ -1,0 +1,10 @@
+{
+  "utc": "2026-10-04T09:10:31.061367+00:00",
+  "goal_amendment": "/ML-vePFS/infra_rd/kun/others/wzg/workspace/evoproto/runs/kd_pixel_v2/goal_amendment.json",
+  "a_sigmoid": "Preserve absolute probabilities of supported old foreground classes using independent Bernoulli KL",
+  "b_relational": "Preserve relative distinctions among supported old foreground classes using conditional categorical KL; invariant to common old-logit offsets",
+  "shared": "same CAM evidence gates, square-root class support balance, lambda0.1, temperature2, globalbatch8, seed0; no background/new outputs in either KD",
+  "resume": "same step1 warmup2000 student AND optimizer; teacher shared step0; subsequent dataloader stream restarts under chosen GPU grouping, not bitwise continuation",
+  "comparison": "no baseline rerun; both full two-stage endpoints compared to archived BASE and prototype KD",
+  "resource": "8card only; GPU partition chosen from measured full-training throughput"
+}

@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-05T03:14:09.625271+00:00",
+  "base": "optimized conditional old foreground KD byte-identical",
+  "geometry": "student old prototypes detached only for SEP; new prototypes learn; foreground pairs deduplicated; cosine squared hinge margin0",
+  "selection": "past broad EMA ranked with trusted pair exposures, foreground old-new/new-new only",
+  "matrix_strength": "rates never loss weights; unchanged lambda0.1; bounded cosine hinge stops once separated",
+  "resume": "restore model+optimizer; same-stage observer and selector restore exact; reset observer at common step1 warmup lacking state",
+  "GT": "not read by any training selector/loss; diagnostic/evaluation only"
+}

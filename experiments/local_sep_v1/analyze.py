@@ -1,0 +1,50 @@
+from pathlib import Path
+import sys,os,json
+R=Path('/ML-vePFS/infra_rd/kun/others/wzg/workspace/evoproto');E=R/'experiments/local_sep_v1';U=R/'runs/local_sep_v1';RUN=U/'formal';S=E/'src'
+sys.path.insert(0,str(R/'experiments/kd_pixel_v2'))
+from run_kd import environment
+os.environ.update(environment('8card'))
+from kd_runtime import safe_path,atomic_json,digest,now
+import torch,numpy as np
+read=lambda p:json.loads(safe_path(p).read_text())
+study=read(RUN/'study.json');done=read(RUN/'training_complete.json');assert read(RUN/'status.json')['status']=='complete'
+assert {str(p.relative_to(S)):digest(p) for p in S.rglob('*.py') if '__pycache__' not in p.parts}==study['source_sha256']
+assert digest(E/'run.py')==study['runner_sha256']
+result=read(RUN/'evaluations/step2_iter8900/result.json');assert result['images']==1449
+job=read(RUN/'eval_queue/step2_iter8900.json');assert digest(job['checkpoint'])==result['checkpoint_sha256']==job['checkpoint_sha256']
+final=torch.load(done['checkpoint'],map_location='cpu',weights_only=True,mmap=True)
+evaluated=torch.load(job['checkpoint'],map_location='cpu',weights_only=True,mmap=True)
+parent=torch.load(study['resume_checkpoint'],map_location='cpu',weights_only=True,mmap=True)
+assert final['iteration']==evaluated['iteration']==8900 and digest(done['checkpoint'])==done['checkpoint_sha256']
+assert all(torch.equal(v,evaluated['model_state'][k]) for k,v in final['model_state'].items())
+changed=[k for k,v in final['model_state'].items() if not torch.equal(v,parent['model_state'][k])]
+assert set(changed)=={'decoder.conv6.weight','decoder.conv7.weight'},changed
+advanced=[]
+for k,v in parent['optimizer_state']['state'].items():
+ delta=int(final['optimizer_state']['state'][k]['step'])-int(v['step'])
+ assert delta in [0,300]
+ if delta:advanced.append(k)
+assert len(advanced)==2
+assert int(final['online_confusion_state']['updates'])-int(parent['online_confusion_state']['updates'])==300
+assert digest(study['resume_checkpoint'])==study['resume_sha256']=='8330ec6a7ae80aaa224c0c63f282a3e12462a38ac25e6ff448a3416d788822c8'
+parts=[read(RUN/'evaluations/step2_iter8900'/f'rank{i}.json') for i in range(8)]
+names=sum([x['images'] for x in parts],[]);assert len(names)==len(set(names))==1449
+def metrics(r):
+ h=np.asarray(r['histogram']);d=h.diagonal();old=slice(1,16);new=slice(16,21)
+ return {'all_miou':r['all_miou'],'old_miou':r['previous_foreground_miou'],'new_miou':r['current_foreground_miou'],
+ 'old_precision':float(d[old].sum()/h[:,old].sum()*100),'old_recall':float(d[old].sum()/h[old].sum()*100),
+ 'new_precision':float(d[new].sum()/h[:,new].sum()*100),'new_recall':float(d[new].sum()/h[new].sum()*100),
+ 'BG_to_new':int(h[0,new].sum()),'new_to_BG':int(h[new,0].sum()),'BG_to_old':int(h[0,old].sum()),'old_to_BG':int(h[old,0].sum()),
+ 'old_to_new':int(h[old,new].sum()),'new_to_old':int(h[new,old].sum()),'class_iou':r['class_iou']}
+reference=read(R/'runs/ald_calibration_v9/formal/evaluations/step2_iter8600/result.json');m=metrics(result);r=metrics(reference)
+logs=[json.loads(x) for x in (RUN/'10-5/step2/local_sep_metrics.jsonl').read_text().splitlines()]
+analysis={'status':'complete_endpoint_analysis','utc':now(),'candidate':m,'reference':r,'delta':{k:m[k]-r[k] for k in m if k!='class_iou'},
+ 'class_iou_delta':{k:m['class_iou'][k]-r['class_iou'][k] for k in m['class_iou']},
+ 'checkpoint':done['checkpoint'],'checkpoint_sha256':done['checkpoint_sha256'],'evaluated_checkpoint_sha256':result['checkpoint_sha256'],
+ 'actual_updates':300,'global_batch':32,'training_sample_exposures':9600,'training_seconds':done['elapsed_seconds'],
+ 'changed_model_tensors':changed,'advanced_Adam_states':advanced,'readiness':read(U/'readiness.json'),'local_sep_logs':logs,
+ 'verified':{'full1449_unique':True,'final_equals_evaluated_model':True,'best_reference_unchanged':True,'only_two_decoder_convolutions_updated':True,'image_classifier_function_unchanged':True,'online_confusion_history_preserved':True},
+ 'target_exceeded':m['all_miou']>r['all_miou'],
+ 'limits':['Fixed-seed adaptive development, not statistical significance or isolated SEP attribution.','Inherited ALD/KD supervision plus reference retention accompany SEP.','Frozen bank is derived only from weak training evidence; validation GT only audits targets and outcome.','Frozen old output weights do not imply invariant old predictions because decoder features change.','Initial target accuracy is at native28 grid; endpoint metrics use original GT resolution.']}
+atomic_json(U/'analysis.json',analysis)
+print(json.dumps({k:analysis[k] for k in ['candidate','delta','class_iou_delta','target_exceeded']},indent=2))

@@ -1,0 +1,8 @@
+{
+  "utc": "2026-10-04T13:14:31.184165+00:00",
+  "separation": "Main and prototype nativepixel logits, not prototypecosine alone",
+  "selection": "Consume past globally synchronized EMA; immutable pre-mixing PAR anchors; noGT",
+  "KDblend": "Perpixel max0.5 replacement with reliableoldoldbinaryKL, fullfallback elsewhere",
+  "state": "Estimator andselector exact same-stage checkpoint restore; resetperstage",
+  "source": "Isolatedcopies, frozenonlyafterverification"
+}

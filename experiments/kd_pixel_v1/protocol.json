@@ -1,0 +1,42 @@
+{
+  "goal": "Improve KD with new-class-aware, class-balanced pixel prediction distillation",
+  "host_names": {
+    "8card": "101.126.31.72:38577",
+    "4card": "101.126.37.128:63486"
+  },
+  "work_boundary": "/ML-vePFS/infra_rd/kun/others/wzg",
+  "step0_retrained": false,
+  "baseline_retrained": false,
+  "random_seed_search": false,
+  "seed": 0,
+  "stages": [
+    1,
+    2
+  ],
+  "iterations_per_stage": 8000,
+  "global_batch": 8,
+  "per_gpu_batch": 1,
+  "training_gpus": 8,
+  "evaluation_gpus": 4,
+  "learning_rate": 2e-05,
+  "loss_warmup": 2000,
+  "pixel_kd_weight": 0.1,
+  "temperature": 2.0,
+  "architecture": "baseline ViT-B and independent conv8 segmentation head unchanged",
+  "method": [
+    "KL on main segmentation logits at native decoder resolution",
+    "teacher background matches student background+all new probabilities",
+    "PAR current-new-class pixels veto KD; strong image-label-masked new CAM softly attenuates remaining KD",
+    "normalized teacher entropy provides continuous reliability weight",
+    "global batch per-teacher-class normalization, background as one class"
+  ],
+  "unchanged": "historical baseline source/data/GT protocol, original pseudo labels and original padding behavior; prototype KD/SEP and ALD off",
+  "parallel_equivalence": "BCE/PTC denominators and KD class counts aggregated over 8 ranks; checked against global-batch reference gradients",
+  "comparison": "Existing final BASE and original KD; step1 previous10/current5, step2 previous15/current5 plus initial10/cumulative10",
+  "limitations": [
+    "One seed, no significance claim",
+    "DDP sampling/augmentation/dropout not bitwise identical to historic single-GPU execution",
+    "Improvement is a research hypothesis, not guaranteed"
+  ],
+  "performance_goal": "Seek roughly +1pp overall while improving old-class retention without material new-class regression; not a promised outcome"
+}

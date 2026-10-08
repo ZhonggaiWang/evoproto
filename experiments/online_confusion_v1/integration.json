@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-04T12:37:06.215844+00:00",
+  "observer": "Before mixed teacher labels; segmentation prediction never gates anchors",
+  "loss_changed": false,
+  "gt_read_in_observer": false,
+  "resume": "Restores matrix from incremental checkpoint, starts fresh if older checkpoint lacks observer; mismatched class/stage rejected",
+  "save": "Iteration and final checkpoints plus latest JSON",
+  "update": "Every normal incremental training batch, no extra network forward"
+}

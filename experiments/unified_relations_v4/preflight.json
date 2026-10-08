@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "checks": [
+    "collapsed_KD_exact_KL",
+    "preserves_pair_mass_not_wrong_internal_order",
+    "SEP_correct_direction",
+    "SEP_stops_when_order_correct",
+    "unsupported_pair_full_KD",
+    "background_mass_retained_by_same_KD",
+    "absent_class_suppressed_by_same_KD",
+    "padding_zero_relation_loss",
+    "distinct_image_support_not_exposures",
+    "directed_not_symmetric_graph",
+    "slim_model_exact_native_logits_and_classifiers_two_shapes"
+  ],
+  "source_sha256": {
+    "data.py": "c1a3ddec9df6c82d2e6d168bd7bcf80f891b56acc8ee670c4f741231dd137163",
+    "run.py": "52190984870824dd98e1c4e5fc992e6564232acc3f68eb476ead5dadb1e056b2",
+    "common.py": "93431ae8264279d882ab6a7acbaaf343d2b545eebcde6c05ab82fce897acd524",
+    "evaluate.py": "0b04a91d6db969c7c789a25ca36ab372b94e9b908f38f81a268b9e5af2a803d1",
+    "train.py": "8cb46d0ab370b0dcf70b92dabfc752677e6a52148daad512cd6aa3fa4f679983",
+    "mechanism.py": "c1de407328553b8ca6c95f0961bb41f065a0a389c3d9756b679b5af90cc497da",
+    "network.py": "dd3ef423b4b7d04bcff93bbfea197ef261b7b3a7d660a022d1a4368900b3c963",
+    "test_mechanism.py": "8a4ef8194be26e037bda483d9fcee7cf6d1faa031e180938776cabc964797df8"
+  },
+  "utc": "2026-10-05T16:18:31.938788+00:00"
+}

@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-04T12:35:41.419369+00:00",
+  "scope": "Online directed confusion observational modeling only; no loss or learning-strength changes",
+  "anchor": "Pre-mixing PAR pseudo label; foreground matching highCAM, weightCAM*top2gap; lowCAM background",
+  "prediction": "Student full segmentation head argmax, including background and new classes",
+  "online": "DDP global pooled weighted counts before row normalization; EMA0.98; unsupported rows unknown; missing rows preserve EMA with staleness",
+  "GT_policy": "GT scoring module called only after evidence and online state built, never passed into estimator or training loss",
+  "diagnostic": "Full VOC10-5 step2 validation, frozen warmup2000 and final8000 checkpoints; full final-checkpoint training stream without pixelGT; then heldout validation scoring",
+  "resizing": "448x448 aligned image/CAM/GT nearest masks; diagnostic, not multiscale benchmark mIoU",
+  "compute": "8card only; four independent workers per checkpoint, batches4; not baseline retraining",
+  "write_boundary": "/ML-vePFS/infra_rd/kun/others/wzg",
+  "hyperparameter_policy": "Reuse high0.7/low0.25; no GT-tuned search. EMA setting governs smoothing, not learning.",
+  "revision": "schema2 dualviews after GT diagnosed selection bias",
+  "status": "completed",
+  "final_decision": "/ML-vePFS/infra_rd/kun/others/wzg/workspace/evoproto/runs/online_confusion_v1/final_decision.json"
+}

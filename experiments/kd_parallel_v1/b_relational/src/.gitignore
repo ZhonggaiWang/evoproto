@@ -1,0 +1,10 @@
+.runtime/
+.analysis-tmp/
+.analysis-tools/
+__pycache__/
+*.py[cod]
+data/SegmentationClassAug/
+pretrained/
+runs/
+tests/.runtime-tmp/
+

@@ -1,0 +1,15 @@
+{
+  "parent_source": "/ML-vePFS/infra_rd/kun/others/wzg/workspace/evoproto/experiments/ald_calibration_v9/src",
+  "copied_source": {
+    "model/backbone/wide_resnet.py": "0da7e729c8a3cd26a3fec9d291bb07e784d1aa6a02c291699b1965328079c99f",
+    "model/backbone/resnet.py": "10f77df9773c7f70968b83ec80a4f56736897e03329b54da6f9bfe1387c1f460",
+    "model/backbone/util.py": "7b6abef254c852d1c01c66f57b6c3f76b1b0a354d2bc983e8de5468b12c9e7a9",
+    "model/backbone/vit.py": "6a362947c6cd1a0f458df63c985eb415d8d849413e7af45091876592da0bda1a",
+    "model/backbone/__init__.py": "5b5b22a883ebc8cd641e1cbeeae625599d924b3060b698fed58f893213bf3fd5",
+    "model/backbone/deit.py": "102505e4004aa17352db190f5c0a4beaeac4b2821b8622edda1cc18589d77dd9",
+    "datasets/transforms.py": "d6fd71009fc5890e6452a069f6e5456f421a73fcdae818899ce15546dda37df3",
+    "datasets/voc.py": "1310fe50c402c0e7258ea28ce72ca7fa3074705883999e4f22b8edc7612373ab"
+  },
+  "utc": "2026-10-05T15:57:10.124961+00:00",
+  "scope": "New independent slim network / runner / four-module objective; only encoder and dataset utilities reused"
+}

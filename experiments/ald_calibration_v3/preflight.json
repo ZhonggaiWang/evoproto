@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "gradient_error": 6.51925802230835e-09,
+  "value_error": 0.0,
+  "checks": [
+    "mass_conservation",
+    "untouched_classes_exact",
+    "candidate_pair_correction_gradient",
+    "inactive_exact_reference",
+    "uncertain_CAM_veto",
+    "8rank_uneven_support_empty_rank_full_loss"
+  ],
+  "sources": {
+    "proposals.py": "d9354eb855895ce86fa008db9c668b8db5a344c71836a280d6f30dc7b8eb2b30",
+    "losses.py": "72ee695212240701c4716e9a0195a69598ce271af3029a803e57cfcac0079900",
+    "test_ald.py": "55f42ecf94fba7dd9ca883728b4d29ae5091ca408d1f11ecbec03c25a5430a35"
+  }
+}

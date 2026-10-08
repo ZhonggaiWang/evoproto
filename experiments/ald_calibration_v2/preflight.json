@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "gradient_error": 7.450580596923828e-09,
+  "value_error": 1.1920928955078125e-07,
+  "checks": [
+    "forbidden_mass_zero",
+    "remaining_ratios_preserved",
+    "no_forced_BG",
+    "veto_gradient_direction",
+    "unknown_not_hard_negative",
+    "conflict_neutral_target",
+    "8rank_full_loss_global_value_gradient"
+  ],
+  "sources": {
+    "targets.py": "32ed0d5fa337aed9ef92f920a3c739b51071b80bda6d36c76196a535a0263e3c",
+    "losses.py": "562eb8219b5a648e1dea4478515da552fe9df78a320924f44ccddd5108a82983",
+    "test_ald.py": "d75ac77a73e19529818160e29ac44c0055bd8bf72219122c6c1c5f9733051cd0"
+  }
+}

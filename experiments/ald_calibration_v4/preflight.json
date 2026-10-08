@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "gradient_error": 1.30385160446167e-08,
+  "value_error": 5.960464477539063e-08,
+  "checks": [
+    "mass_conservation",
+    "untouched_classes_exact",
+    "candidate_pair_correction_gradient",
+    "inactive_exact_reference",
+    "uncertain_CAM_veto",
+    "confirmed_old_presence_veto",
+    "stop_after_winning_no_teacher_reversal",
+    "class_balanced_retention",
+    "8rank_uneven_support_empty_rank_full_loss"
+  ],
+  "sources": {
+    "admission.py": "f901bf9c0873689414a2b67d203216bb15169581417bae99697037120d5e90ce",
+    "proposals.py": "ddac9edeb0024f953f38cdc4ae1c11a757b44b48ef28c479041e0cb02ba11103",
+    "losses.py": "18fa024a8b2f08dc1b5e8280276640f4dc8b1494c91ba6b931a48f8c24e345c3",
+    "test_ald.py": "4303ac4a2aac5dbc9731baa265ee19d8ae92c87fd02b65d92d577d1a711d11f3"
+  }
+}

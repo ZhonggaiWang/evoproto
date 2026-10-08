@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "checks": [
+    "collapsed_KD_exact_KL",
+    "preserves_pair_mass_not_wrong_internal_order",
+    "SEP_correct_direction",
+    "SEP_stops_when_order_correct",
+    "unsupported_pair_full_KD",
+    "no_background_gradient",
+    "padding_zero_relation_loss",
+    "distinct_image_support_not_exposures",
+    "directed_not_symmetric_graph",
+    "slim_model_exact_native_logits_and_classifiers_two_shapes"
+  ],
+  "source_sha256": {
+    "data.py": "c1a3ddec9df6c82d2e6d168bd7bcf80f891b56acc8ee670c4f741231dd137163",
+    "run.py": "52190984870824dd98e1c4e5fc992e6564232acc3f68eb476ead5dadb1e056b2",
+    "common.py": "5a740db4d161156d1f2de74881a3fe705d9399fdfe943de728ff525bedaf4876",
+    "gradient_probe.py": "30c497fc9c6b39d86fd971e8be694429e18395646981926e0b9a9277cabae7b1",
+    "evaluate.py": "42b439a69f43c351e6bc4990cfb298a8e17a4356eb899fb0c4107ce006d2b539",
+    "train.py": "dc79a495cb2193544f7949154c633f808bd062a4dd2180127ac8d700e84c88bf",
+    "mechanism.py": "ec54e2e762f9cb3b7998faefa3568d06ce64c4300030928e4988378e2e8f5af2",
+    "network.py": "dd3ef423b4b7d04bcff93bbfea197ef261b7b3a7d660a022d1a4368900b3c963",
+    "test_mechanism.py": "a1c29afba8369f85c6bb24109f3bf88d12318c93d12e027c1ae908d99f09fa3d"
+  },
+  "utc": "2026-10-05T16:11:05.905032+00:00"
+}

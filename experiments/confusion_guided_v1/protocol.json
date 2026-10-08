@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-04T13:09:31.647597+00:00",
+  "goal": "Improve final segmentation using directed confusion to choose hard learning pairs",
+  "arms": {
+    "a_sep": "Directed pixel SEP on main+prototype logits plus retained optimized globaloldKD",
+    "b_pairkd": "SameSEP and confidence-gated oldoldbinarypairKL, per-pixel at most50% replacement of globaloldKL with exactfallback"
+  },
+  "selector": "Past broadPAR EMA, top1 directedforetarget/class; minclassimages8/minpairimages3/rate1%; warmcold100updates/ramp200; refresh50,stale200; noGT selection andnoCijlossmultiplier",
+  "SEP": "TrustedCAM/PARanchors, oldteacheragreement andnewanchorpriority; nativepixelsoftplus(1+competitor\u2212anchor), halfmain+halfprototype; sqrtclasscount globalbalance; lambda0.1*ramp",
+  "KD": "Original lambda0.1,T2,newawaregates; candidateB addsselectedtrusted oldoldpair withteacherconditionalp>=.75; preserveglobalnormalization andfullfallback",
+  "provenance": "Same frozenstep0/commonstep1warmup2000 student+optimizer, seed0, globalbatch8, step1to8000 thenownteacher step2to8000; no baseline rerun",
+  "compute": "Only8card, GPU0\u20133 armA/4\u20137 armB,spg2,async endpoint+intermediate evaluation",
+  "GT": "Independent evaluation only; noGTinonline matrix orpairloss",
+  "scope_caveat": "NewSEP oldteacheragreement intentionally conservative; currentnewanchors neednooldteacheragreement. Pseudo-labelconfusion guidespairdirection/rank, not calibratederrorprobability."
+}

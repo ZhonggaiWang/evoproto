@@ -1,0 +1,24 @@
+{
+  "utc": "2026-10-04T09:02:52.870534+00:00",
+  "unit_tests": 9,
+  "distributed_gradient": {
+    "ranks": 8,
+    "reference": 0.6706371307373047,
+    "actual": 0.6706371903419495,
+    "passed": true
+  },
+  "smoke": {
+    "stages": [
+      1,
+      2
+    ],
+    "iterations_each": 4,
+    "gpus": 8,
+    "returncodes": [
+      0,
+      0
+    ]
+  },
+  "real_gradient_probe": "/ML-vePFS/infra_rd/kun/others/wzg/workspace/evoproto/runs/kd_pixel_v2/gradient_probe_warmup2000.json",
+  "historical_evaluator_exact_match": "/ML-vePFS/infra_rd/kun/others/wzg/workspace/evoproto/experiments/kd_pixel_v1/verification.json"
+}

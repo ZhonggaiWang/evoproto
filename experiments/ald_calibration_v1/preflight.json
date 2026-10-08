@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "gradient_error": 8.940696716308594e-08,
+  "value_error": 4.76837158203125e-07,
+  "checks": [
+    "unknown_image_not_negative",
+    "empty_pixel_supervision_zero_gradient",
+    "KD_explicit_uncertainty_veto",
+    "raw_positive_insufficient",
+    "spatial_multiview_admission",
+    "view_conflict_veto",
+    "8rank_unequal_support_value_gradient"
+  ],
+  "sources": {
+    "evidence.py": "22d19aae2c0ab2d41812238792ba6326fd3026ae301d7a5f11708cdc06bc72ed",
+    "losses.py": "ea7aeff9387f23c010ecc15d0050b19af315dd41f94d39e1659788418748d5a8",
+    "test_ald.py": "0aa088b5044b3e6c75ee411c770d7f2096c81366c77fd529153565915a26aee0"
+  }
+}

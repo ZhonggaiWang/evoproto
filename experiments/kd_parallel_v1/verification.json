@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-04T09:17:50.641701+00:00",
+  "unit_tests": {
+    "a_sigmoid": 9,
+    "b_relational": 10
+  },
+  "distributed_gradients_4ranks": "exact equality for both arms",
+  "real_gradient_probes": "three training images per arm; no optimizer updates; old foreground only",
+  "cam_optimization_equivalence": "/ML-vePFS/infra_rd/kun/others/wzg/workspace/evoproto/experiments/kd_parallel_v1/cam_equivalence.json",
+  "smoke": "both arms restored optimizer/student at2000, completed both stages, evaluated both checkpoints; all processes exit0"
+}

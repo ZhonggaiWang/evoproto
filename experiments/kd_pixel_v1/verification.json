@@ -1,0 +1,44 @@
+{
+  "recorded_utc": "2026-10-04T08:39:23.379328+00:00",
+  "unit_tests": {
+    "count": 9,
+    "passed": 9
+  },
+  "distributed_test": {
+    "world": 8,
+    "reference_gradient": 0.9629389643669128,
+    "distributed_gradient": 0.9629389047622681,
+    "passed": true
+  },
+  "smoke": {
+    "run": "/ML-vePFS/infra_rd/kun/others/wzg/workspace/evoproto/runs/kd_pixel_v1_smoke",
+    "stages": 2,
+    "steps_per_stage": 4,
+    "global_batch": 8,
+    "completed": true,
+    "followup_change": "Global value reporting corrected without changing analytic gradients; unit and 8-process gradient checks rerun afterwards"
+  },
+  "baseline_evaluator_verification": [
+    {
+      "name": "baseline_base_step1",
+      "all_miou": 74.10911960365213,
+      "max_class_iou_error": 0.0
+    },
+    {
+      "name": "baseline_base_step2",
+      "all_miou": 68.47480849469977,
+      "max_class_iou_error": 0.0
+    },
+    {
+      "name": "baseline_kd_step1",
+      "all_miou": 73.61266712203229,
+      "max_class_iou_error": 0.0
+    },
+    {
+      "name": "baseline_kd_step2",
+      "all_miou": 68.75766559690598,
+      "max_class_iou_error": 0.0
+    }
+  ],
+  "pixel_kd_source_sha256": "64f061d31e283e071a322988bc5ef442df18b1ebc0151c3599664b631ee229a6"
+}

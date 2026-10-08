@@ -1,0 +1,39 @@
+{
+  "utc": "2026-10-04T09:14:25.204601+00:00",
+  "passed": true,
+  "cam_cases": [
+    {
+      "training": false,
+      "size": 224,
+      "max_abs_difference": 0
+    },
+    {
+      "training": false,
+      "size": 448,
+      "max_abs_difference": 0
+    },
+    {
+      "training": false,
+      "size": 672,
+      "max_abs_difference": 0
+    },
+    {
+      "training": true,
+      "size": 224,
+      "max_abs_difference": 0
+    },
+    {
+      "training": true,
+      "size": 448,
+      "max_abs_difference": 0
+    },
+    {
+      "training": true,
+      "size": 672,
+      "max_abs_difference": 0
+    }
+  ],
+  "ordinary_forward_and_backward": "exact tensor equality in eval and train mode",
+  "original_sha256": "ffff4d8ac4052966f7214fced72d14766847e9f66f614056c1f7dfc0e2d7cc01",
+  "optimized_sha256": "6922d2aac90854f199726b6f3a626365b1251e5ce1497955d0aa558f1447550d"
+}

@@ -1,0 +1,5 @@
+{
+  "parent_source": "/ML-vePFS/infra_rd/kun/others/wzg/workspace/evoproto/experiments/unified_relations_v3",
+  "change": "Unify full calibrated distribution including BG. ALD provides allowed sets and anchors, graph includes new-to-BG conflicts, KD preserves all collapsed groups, SEP corrects only inside supported pairs. Remove separate hard CE.",
+  "utc": "2026-10-05T16:18:22.873107+00:00"
+}

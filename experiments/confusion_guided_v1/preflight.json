@@ -1,0 +1,55 @@
+{
+  "utc": "2026-10-04T13:31:46.692596+00:00",
+  "passed": true,
+  "checks": {
+    "selector_tests.log": {
+      "passed": 14,
+      "sha256": "ab6fcc8487bcf9ceead427c0269b2a9c52031539ee70da305bc1d165e65b51b1"
+    },
+    "loss_tests.log": {
+      "passed": 22,
+      "sha256": "5d514d97f9722230e6eb7886564c37c0406bff4318e27f695154c29a42319274"
+    },
+    "ddp": {
+      "test": "directed_pair_sep_and_hybrid_kd_4rank_equivalence",
+      "ranks": 4,
+      "passed": true,
+      "rank_batch_sizes": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "zero_evidence_rank": 3,
+      "max_absolute_errors": {
+        "sep_value": 0.0,
+        "kd_value": 0.0,
+        "sep_main_gradient": 0.0,
+        "sep_proto_gradient": 0.0,
+        "kd_main_gradient": 0.0
+      },
+      "sep_global_value": 0.9141010046005249,
+      "kd_global_value": 1.83452570438385,
+      "sep_old_pixels": 22,
+      "sep_new_pixels": 6,
+      "kd_pair_pixels": 16
+    },
+    "gradient_probe_sha256": "2c94bca78aedc83eb1afd9180baf6a1f42583541aab9df4e44b4a3d0f2e05f7a",
+    "a_sep": {
+      "two_stages_returncode_zero": true,
+      "two_evaluations_16_images": true,
+      "SEP_exercised": true,
+      "pair_KD_exercised": false,
+      "source_manifest_unchanged": true
+    },
+    "b_pairkd": {
+      "two_stages_returncode_zero": true,
+      "two_evaluations_16_images": true,
+      "SEP_exercised": true,
+      "pair_KD_exercised": true,
+      "source_manifest_unchanged": true
+    }
+  },
+  "runner_failure_handling": "polls both evaluator workers and train terminal state; record failures; no loss source changes after smoke",
+  "runner_sha256": "c2fa4a57baabcc31f8e2dd6b13cc1452e1b233d4767503ccb01994ee9b997137"
+}

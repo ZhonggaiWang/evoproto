@@ -1,0 +1,5 @@
+{
+  "parent_source": "/ML-vePFS/infra_rd/kun/others/wzg/workspace/evoproto/experiments/unified_relations_v2",
+  "change": "Output relation refinement only: freeze encoder/classifiers, train existing decoder with ALD+KD+SEP. Whole images and same relation mechanism retained.",
+  "utc": "2026-10-05T16:10:56.960542+00:00"
+}

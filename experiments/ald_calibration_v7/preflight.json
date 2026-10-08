@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "gradient_error": 3.470631781965494e-09,
+  "value_error": 6.51925802230835e-09,
+  "checks": [
+    "spatial_layer_real_gradient",
+    "frozen_output_weights_no_gradient",
+    "8rank_unequal_support_empty_rank_full_loss_gradient"
+  ],
+  "sources": {
+    "losses.py": "7ceb81fd9767a0388a63ab32dcffd5ddca292344bba174b44a0200e380712400",
+    "test_ald.py": "a5cb40f18b16ef345ae30b17c142e7d7923e6c04e73d7d9da15ac1c4b08edf07"
+  }
+}
