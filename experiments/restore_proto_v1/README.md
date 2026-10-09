@@ -90,3 +90,15 @@
 `tools/evaluate_restore_proto_fusion.py` 不训练参数，比较原型概率权重 alpha = 0、0.25、0.5、0.75、1。主头与原型头都采用 BCE 训练，因此诊断使用 `(1-alpha) * sigmoid(main_logits) + alpha * sigmoid(prototype_cosine / 0.1)`；先将 logits 插值回原图，再变换概率。端点直接以各分支 logits 取 argmax，避免 sigmoid 饱和造成端点数值平局。
 
 该诊断默认在 CPU 上运行，可与 GPU 训练并行；先用共享 step0 核对 GPU 主头分数。每张图片的混淆矩阵会保留为紧凑 NPZ，供之后核验或配对分析。alpha 网格在最终增量结果出现前固定。若采用融合推理，必须公开全部取值，并给需要比较的实验使用同一 alpha；任何验证集选参都不能被表述为独立测试证据。主头的 square448 与 aspect672 原协议结果仍须保留。
+
+## 最终权重核查
+
+阶段保存并生成 `final_receipt.json` 后，可运行：
+
+```sh
+CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 .runtime/restore_proto/venv/bin/python -B tools/audit_restore_proto_checkpoint.py --stage-dir runs/restore_proto_v1/formal/full/10-5/step1
+```
+
+该检查只用 CPU，核对 checkpoint 与前驱的 SHA256、冻结训练源码、8,000 次更新记录、完整模型严格加载、所有参数有限值，以及各阶段 512 维原型参数的形状和范数。旧原型相对前驱的变化量也会保存到阶段目录的 `checkpoint_audit.json`。参数存在或发生变化本身不能证明性能贡献，仍须结合实际损失／梯度与完整链路消融。
+
+清理权重时，最终采用方法的共享 step0、step1 前驱和 step2 最终权重需要一起保护。其他候选须在完成所需评估与比较后再决定是否删除；不按文件时间或名称模糊批量删除。
