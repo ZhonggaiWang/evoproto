@@ -32,3 +32,6 @@ work_dir_voc_wseg/
 
 # Report rendering scratch
 /tmp/pdfs/
+
+# Generated report and figure artifacts
+/output/

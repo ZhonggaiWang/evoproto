@@ -104,3 +104,5 @@ CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 .runtime/restore_proto/venv/bi
 清理权重时，最终采用方法的共享 step0、step1 前驱和 step2 最终权重需要一起保护。其他候选须在完成所需评估与比较后再决定是否删除；不按文件时间或名称模糊批量删除。
 
 `tools/postprocess_restore_proto.py` 是有限的 CPU 后处理队列：等待每组正式回执，核查各阶段最终权重，等待官方双卡评估完成后，对最终模型执行同一固定融合网格。它检查两种协议的 CPU/GPU 端点差异、1449 张图像唯一性和逐图混淆矩阵汇总；结果写入各组 step2 的 `fusion_evaluation.json`、`.npz` 和 `fusion_verification.json`。该任务不会修改权重，训练继续使用原两张卡。队列状态在 control/postprocess_state.json；若正式协调进程结束而所需结果缺失，队列报错退出。
+
+`tools/plot_restore_proto_confusion.py --stage-dir ... --output output/figures/name.png` 可从 full 组保存的训练统计生成 PNG 与 SVG。左图为受独立图片支持的 EMA 混淆率，橙框为 SEP 对手；右图仅显示当前阶段旧类实际可用于 KD 的权重增幅。新类虽然参与图统计，但被 KD 门控排除，不能把它们的 degree 当作实际蒸馏强度。图中数值是指定更新时点的快照，不是训练均值或验证集混淆矩阵。
