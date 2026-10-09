@@ -679,7 +679,7 @@ class Trainer:
                 cas_graph, _ = relation.graph()
                 cas_mask, cas_old, cas_new, cas_local = select_conflicts(
                     old_segs, cams, cams_aux, cls_label, refined_pseudo_label,
-                    valid_pixels, cas_graph, self.old_classes + 1, args.cas_mode)
+                    valid_pixels, cas_graph, self.old_classes + 1, args.cas_mode, native_proto)
                 if n_iter < args.loss_warmup_iters:
                     cas_mask = torch.zeros_like(cas_mask)
 

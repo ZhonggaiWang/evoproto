@@ -7,9 +7,12 @@ Candidate-label learning already exists; this experiment does not pre-claim nove
 ## Selection
 
 Old teacher predicts foreground a with sigmoid confidence >=0.7 and a positive old image prediction.
-Main and auxiliary CAM agree on new class b, each >=0.7; b has a current image tag and PAR agrees.
-Exclude crop padding. The confusion variant additionally requires either directed a/b edge to be a supported top-2 confusion neighbor (at least 3 distinct images).
+PAR proposes new class b with a current image tag. Main and auxiliary CAM both support b at >=0.25, but they do not both confidently select b at >=0.7. Reuse the existing .25/.7 thresholds.
+The current detached prototype head must prefer a over b. Exclude crop padding.
+The confusion variant additionally requires the directed OLD-to-NEW edge a->b to be a supported top-2 confusion neighbor (at least 3 distinct images).
 All selection evidence is detached; use the previous iteration's graph. No modification during the first 2000 warmup updates.
+
+The initial strong-CAM rule selected predominantly real new-class pixels in a fixed 200-image validation audit (Step1 98.54% new; Step2 100%). This motivated focusing on weak CAM propagation and requiring current prototype corroboration. The initial code and diagnostics remain preserved, and this adaptive design choice must be disclosed.
 
 ## Marginal BCE
 

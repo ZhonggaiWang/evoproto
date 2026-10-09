@@ -13,7 +13,7 @@ from datasets.voc import VOC12SegDataset
 from utils.camutils import multi_scale_cam2,cam_to_label,refine_cams_with_bkg_v2
 from utils import imutils
 from experiments.restore_proto_v1.mechanism import ConfusionProto
-from experiments.restore_proto_cas_v1.supervision import select_conflicts
+from experiments.restore_proto_cas_v1.initial_selection import select_conflicts
 
 
 def load(path,stage):

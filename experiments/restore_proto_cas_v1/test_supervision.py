@@ -37,16 +37,21 @@ g=torch.autograd.grad(l,v)[0]
 assert g[0,1,0,0]==g[0,3,0,0]
 # No GT interface; prevent background, absent tags, weak evidence and invalid padding.
 teacher=torch.tensor([[[[-3.]*6],[[3.]*6],[[-3.]*6]]])
-cams=torch.zeros(1,4,1,6);cams[:,2]=.9;aux=cams.clone();tags=torch.ones(1,4)
+cams=torch.zeros(1,4,1,6);cams[:,2]=.5;aux=cams.clone();tags=torch.ones(1,4)
 par=torch.full((1,1,6),3);valid=torch.ones_like(par,dtype=torch.bool);valid[:,:,0]=False
 cams[:,:,0,1]=0;aux[:,:,0,2]=0;par[:,:,3]=0;teacher[:,:,0,4]=0
 G=torch.zeros(5,5);G[1,3]=1
-m,_,_,local=select_conflicts(teacher,cams,aux,tags,par,valid,G,3,'confusion_pair')
+proto=torch.zeros(1,5,1,6);proto[:,1]=1
+m,_,_,local=select_conflicts(teacher,cams,aux,tags,par,valid,G,3,'confusion_pair',prototype=proto)
 assert m.flatten().tolist()==[False,False,False,False,False,True],m
-assert not select_conflicts(teacher,cams,aux,tags,par,valid,G*0,3,'confusion_pair')[0].any()
-assert select_conflicts(teacher,cams,aux,tags,par,valid,G*0,3,'local_pair')[0].sum()==1
+assert not select_conflicts(teacher,cams,aux,tags,par,valid,G*0,3,'confusion_pair',prototype=proto)[0].any()
+assert select_conflicts(teacher,cams,aux,tags,par,valid,G*0,3,'local_pair',prototype=proto)[0].sum()==1
+assert not select_conflicts(teacher,cams,aux,tags,par,valid,G.T,3,'confusion_pair',prototype=proto)[0].any()
+assert not select_conflicts(teacher,cams,aux,tags,par,valid,G,3,'local_pair',prototype=-proto)[0].any()
+strong=cams.clone();strong[:,2]=.9
+assert not select_conflicts(teacher,strong,strong,tags,par,valid,G,3,'local_pair',prototype=proto)[0].any()
 tags[:,0]=0
-assert not select_conflicts(teacher,cams,aux,tags,par,valid,G,3,'local_pair')[0].any()
+assert not select_conflicts(teacher,cams,aux,tags,par,valid,G,3,'local_pair',prototype=proto)[0].any()
 # All-ignore stays finite and differentiable.
 l=ambiguity_loss(z,torch.full_like(y,255),mask,a,b,'confusion_pair',w)
 assert l==0

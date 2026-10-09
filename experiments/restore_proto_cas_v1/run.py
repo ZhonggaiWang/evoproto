@@ -29,6 +29,7 @@ def main():
     files=[]
     for relative in ['experiments/restore_proto_v1','experiments/restore_proto_cas_v1','model','utils','datasets']:
         files.extend((ROOT/relative).rglob('*.py'))
+    files.extend([ROOT/'tasks.py']+list((ROOT/'tools').glob('*.py')))
     source={str(x.relative_to(ROOT)):sha(x) for x in sorted(files)}
     base=ROOT/'.runtime/restore_proto/shared_step0.pth'
     manifest=dict(source_sha256=source,initial_checkpoint=str(base),initial_sha256=sha(base),

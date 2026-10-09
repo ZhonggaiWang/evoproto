@@ -7,27 +7,20 @@ import torch.nn.functional as F
 
 
 @torch.no_grad()
-def select_conflicts(teacher, cams, aux, tags, par, valid, graph, old_count, mode, prototype=None):
-    """Weak new-class PAR overwrite, corroborated by current old prototype.
-    Thresholds .25/.7 reuse the existing CAM thresholds; graph is old->new.
-    """
+def select_conflicts(teacher, cams, aux, tags, par, valid, graph, old_count, mode):
+    """teacher and CAMs at image resolution; old_count includes background."""
     old = teacher.argmax(1)
     k = cams.shape[1] + 1
-    new = par.long().clamp(1, k - 1)
     ca = cams.detach() * tags[:, :, None, None]
     cb = aux.detach() * tags[:, :, None, None]
+    av, ai = ca.max(1); bv, bi = cb.max(1)
+    new = ai + 1
     teacher_conf = teacher.detach().sigmoid().gather(1, old[:, None])[:, 0]
     old_tag = tags.gather(1, (old - 1).clamp(0, old_count - 2).flatten(1)).reshape_as(old) > 0
-    sa = ca.gather(1, (new - 1)[:, None])[:, 0]
-    sb = cb.gather(1, (new - 1)[:, None])[:, 0]
-    confident_new = (sa >= .7) & (sb >= .7) & (ca.argmax(1) + 1 == new) & (cb.argmax(1) + 1 == new)
     local = valid & (old > 0) & old_tag & (teacher_conf >= .7)
-    local &= (par >= old_count) & (par < k) & (sa >= .25) & (sb >= .25) & ~confident_new
-    if prototype is None:
-        raise ValueError('Current detached prototype evidence is required')
-    proto = F.interpolate(prototype.detach(), size=old.shape[-2:], mode='bilinear', align_corners=False)
-    local &= proto.gather(1, old[:, None])[:, 0] > proto.gather(1, new[:, None])[:, 0]
-    selected = local if mode == 'local_pair' else local & (graph[old, new] > 0)
+    local &= (new >= old_count) & (av >= .7) & (bv >= .7) & (ai == bi) & (par == new)
+    linked = (graph[old, new] > 0) | (graph[new, old] > 0)
+    selected = local if mode == 'local_pair' else local & linked
     if mode == 'off': selected = torch.zeros_like(selected)
     return selected, old, new, local
 

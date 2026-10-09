@@ -37,7 +37,7 @@ def main():
     ds.label_dir='/data/zhonggai/coco/PascalVOC12/SegmentationClass'
     indices=np.linspace(0,len(ds)-1,min(a.limit,len(ds)),dtype=int)
     stats={m:dict(selected=0,gt_old_candidate=0,gt_new_candidate=0,gt_other=0,gt_unknown=0,valid_pixels=0) for m in ['local_pair','confusion_pair']}
-    images=[]
+    images=[];per_image=[]
     with torch.inference_mode():
         for number,index in enumerate(indices):
             name,im,gt,tags=ds[int(index)]
@@ -49,22 +49,25 @@ def main():
             cams,aux=multi_scale_cam2(net,x,scales=[1.,.5,1.5]);box=torch.tensor([[0,448,0,448]])
             valid_cam,_=cam_to_label(cams,cls_label=tags,img_box=box,ignore_mid=True,bkg_thre=.5,high_thre=.7,low_thre=.25,ignore_index=255)
             labels=refine_cams_with_bkg_v2(par,imutils.denormalize_img2(x.clone()),cams=valid_cam,cls_labels=tags,high_thre=.7,low_thre=.25,ignore_index=255,img_box=box)
-            predictions={m:select_conflicts(old,cams,aux,tags,labels,torch.ones_like(labels,dtype=torch.bool),G,oc,m)[:3] for m in stats}
+            _,_,_,_,_,proto,_=net(x,cam_grad=True)
+            predictions={m:select_conflicts(old,cams,aux,tags,labels,torch.ones_like(labels,dtype=torch.bool),G,oc,m,proto)[:3] for m in stats}
             # Ground truth enters only the post-prediction metric calculation.
             target=F.interpolate(torch.as_tensor(gt,device='cuda')[None,None].float(),size=(448,448),mode='nearest')[:,0].long()
             valid=(target>=0)&(target<k)
+            image_record=dict(name=str(name),modes={})
             for m,(mask,aa,bb) in predictions.items():
                 s=stats[m];s['selected']+=int(mask.sum());s['valid_pixels']+=int(valid.sum())
                 s['gt_unknown']+=int((mask&~valid).sum())
                 s['gt_old_candidate']+=int((mask&valid&(target==aa)).sum())
                 s['gt_new_candidate']+=int((mask&valid&(target==bb)).sum())
                 s['gt_other']+=int((mask&valid&(target!=aa)&(target!=bb)).sum())
-            images.append(str(name))
+                image_record['modes'][m]=dict(selected_valid=int((mask&valid).sum()),old_correct=int((mask&valid&(target==aa)).sum()),new_correct=int((mask&valid&(target==bb)).sum()))
+            images.append(str(name));per_image.append(image_record)
             if (number+1)%25==0:print('audit',number+1,len(indices),stats,flush=True)
     for s in stats.values():
         den=s['selected']-s['gt_unknown'];s['candidate_coverage']=None if den==0 else (s['gt_old_candidate']+s['gt_new_candidate'])/den
         s['original_new_label_accuracy']=None if den==0 else s['gt_new_candidate']/den
     out.parent.mkdir(parents=True,exist_ok=True)
-    out.write_text(json.dumps(dict(stage=a.stage,source_directory=str(d),images=images,selection='200 deterministic evenly spaced validation images; square448; offline only',pixel_gt_used_for_selection=False,statistics=stats),indent=2))
+    out.write_text(json.dumps(dict(stage=a.stage,source_directory=str(d),images=images,selection='200 deterministic evenly spaced validation images; square448; offline only',pixel_gt_used_for_selection=False,statistics=stats,per_image=per_image),indent=2))
     print(json.dumps(stats),flush=True)
 if __name__=='__main__':main()
