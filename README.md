@@ -12,7 +12,13 @@ This repository contains a source snapshot of the EvoProto research workspace, i
 - VOC 10-5 完整增量训练；两卡各 batch 4，总 batch 8；每个增量阶段 8,000 步。
 - 同配置运行去混淆、去原型训练约束的消融；仅保留阶段最终权重及必要前驱。
 
-当前 ALD 关闭。完整最终评估和消融仍在进行，不能把历史 71.x 成绩当成本恢复版已取得的结果。实现、损失公式、运行前提和比较口径见 [恢复版说明](experiments/restore_proto_v1/README.md)。核心逻辑见 [mechanism.py](experiments/restore_proto_v1/mechanism.py)。
+恢复版主线及去混淆、去原型监督的完整消融均已完成。无 OLC 的最终 21 类主头 mIoU 为 **68.7125（square448）/ 69.8902（aspect672）**，固定等比例主头／原型概率融合为 **68.8482 / 70.0644**。这些是单次 seed 0 的 VOC 验证结果；融合比例曾使用该验证集选型。实现、损失公式、运行前提和比较口径见 [恢复版说明](experiments/restore_proto_v1/README.md)，核心逻辑见 [mechanism.py](experiments/restore_proto_v1/mechanism.py)。
+
+### 在线旧类标签校正：OLC
+
+新增候选模块为 **[OLC（Old-class Label Correction）](experiments/restore_proto_olc_v1/README.md)**。它复用冻结教师的主、辅助分类头，维护每张图像的预测记忆，在原定每阶段 8,000 步内校正旧类标签；不追加续训，也不增加同阶段参考模型。混淆建模和可学习原型保留。
+
+OLC 完整链已经验证：**旧类标签精确率提高，但最终分割未提升**。同设备 aspect672 主头为 69.8904 → 69.8479，固定等比例融合为 70.0644 → 69.8638。因此正式推荐仍保留无 OLC 的原型恢复主线；OLC 作为实验候选，完整曲线、标签指标和核验证据见 [OLC 结果](experiments/restore_proto_olc_v1/results.json)。标签诊断真值只在独立评估程序中使用，不进入训练。旧 ALD 额外续训方案已经排除，不能用它的成绩作为 OLC 结果。
 
 下载这一版时请指定分支：
 

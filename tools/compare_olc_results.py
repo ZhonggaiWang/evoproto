@@ -87,7 +87,7 @@ def main():
         learning[str(stage)]={str(i):dict(baseline_main=metrics['baseline'][i]['all_miou'],olc_main=r['all_miou'],delta_pp=r['all_miou']-metrics['baseline'][i]['all_miou'],olc_prototype=r['prototype_miou'],olc_cam=r['cam_miou'],olc_auxiliary_cam=r['auxiliary_cam_miou']) for i,r in metrics['olc'].items() if i in metrics['baseline']}
     bn,bh,bo,bf=load_final(BASE/'step2',reference_gpu);cn,ch,co,cf=load_final(CANDIDATE/'step2')
     assert np.array_equal(bn,cn)
-    assert bf['device']==cf['device']=='cuda:0'
+    assert bf['device']==cf['device']=='cuda'
     comparisons={}
     for mode in ['square448','aspect672']:
         comparisons[mode]={}

@@ -168,7 +168,7 @@ head('目前可复核的工件')
 text('代码分支：codex/restore-proto-4090。训练实现位于 experiments/restore_proto_v1；运行记录位于 runs/restore_proto_v1/formal。manifest 保存代码哈希、种子、预算和初始权重来源；每阶段保存配置、命令、前驱哈希、指标、混淆统计和最终权重回执。')
 text('完整模型最终原型参数为 [11,512]、[5,512]、[5,512] 三块。两阶段完整模型严格加载、有限值和前驱 SHA256 核查均通过。单独评估已与训练时验证对齐，主头 mIoU 差异小于 0.001 个百分点。')
 head('权重策略')
-text('不保存每轮／每次验证的快照，只保存阶段最终权重。最终采用方法的共享 step0、step1 前驱和 step2 最终模型一起保护。低性能候选只在评估完成、确认无后续依赖后再清理；日志、指标和核查记录保留。')
+text('不保存每轮／每次验证的快照，只保存阶段最终权重。本次保留共享 step0，以及无 OLC 主线和 OLC 候选各自的 step1、step2，共五个必要权重。已核验的冗余消融和废弃 ALD 权重在最终比较后清理；数据、日志、指标与核查记录保留。')
 head('论文哪些要保留，哪些要改')
 text('保留问题设置、teacher/student、显式可学习原型，以及“混淆指导分离与保持”的主线。当前实现改变了混淆估计、对手选择、SEP 和 KD 的具体公式，需要修订原式 (2)-(7)、总损失式 (11) 及相关结构图箭头。')
 text('特别是原稿对高混淆类别减弱全局原型 MSE；本轮则仅在可信旧类区域加强条件 KD，并在新类区域关闭或衰减 KD。权重方向与约束范围都不同，不能说原公式原样保留。')
@@ -264,14 +264,14 @@ for stage in (1,2):
    rows.append([f'{stage} / {d["iteration"]} / {label}']+[format(100*r[k],'.2f') for k in ['precision','recall','f1','coverage']])
  else:rows.append([f'{stage} / 待诊断','-','-','-','-'])
 result_table(rows,[191,80,80,80,80])
-text('在线表中的“仅主头”与 OLC 共用同一预测记忆，可以观察双头一致筛选的取舍；F1 综合精确率和召回率。在线记忆来自随机裁剪，与上方的整图输入不同，不能将两表差异全部归因于 EMA。它也不等价于一次独立的无 EMA 训练消融。',True)
-text('两个冻结的教师头仍可能同时误判。OLC 记忆会在训练中持续更新，但并不保证标签质量随迭代单调提高；是否值得采用，应结合完整增量链的分割结果判断。',True)
+text('在线表中的“仅主头”与 OLC 共用同一预测记忆，用于观察双头一致筛选的取舍。上表采用完整图像，下表记忆来自随机裁剪；Step 2 两表的教师也来自不同的 Step 1 链路，不能将上下表差异全部归因于 EMA。本实验没有独立隔离 EMA 的训练收益。',True)
+text('两个冻结的教师头仍可能同时误判。历史负证据也可能延迟接纳目标：旧记忆为 0.02、当前双头均为 0.90 时，平均后只有 0.46，仍判负类。这是规则的滞后现象，不足以证明某一类别回落的原因。在线更新不保证标签质量单调提高；是否采用应结合完整链分割结果。',True)
 
 page(12,'OLC 是否改善最终分割','12 / 同预算验证与采用条件')
 comparison=ROOT/'runs/restore_proto_olc_v1/comparison.json'
 data=json.loads(comparison.read_text()) if comparison.exists() else {'status':'waiting'}
 if data.get('status')=='complete':
- text('两条完整增量链的预算、主要配置、前驱关系、最终权重哈希、验证图像和融合端点均已核对。下表比较同一 GPU 上的成对推理结果，单位为 mIoU 百分数；变化列为 OLC 减无 OLC。')
+ text('两条完整增量链的预算、配置、前驱、最终权重和验证图像均已核对。OLC 在 Step 1 的 square448 主头提升 0.6827 点；下表为最终 21 类的同 GPU 配对结果，单位为 mIoU 百分数，变化列为 OLC 减无 OLC。')
  rows=[['输入 / 预测方式','无 OLC','加 OLC','变化']]
  for mode in ['square448','aspect672']:
   for head_key,label in [('main','主头'),('fixed_half_prototype_fusion','0.5 融合')]:
@@ -292,8 +292,11 @@ else:
    rows.append([f'Step {stage} / {r["iteration"]}',format(b['all_miou'],'.3f'),format(r['all_miou'],'.3f'),format(r['all_miou']-b['all_miou'],'+.3f'),format(r['prototype_miou'],'.3f'),format(r['cam_miou'],'.3f')+' / '+format(r['auxiliary_cam_miou'],'.3f')])
   else:rows.append([f'Step {stage} / 待验证','-','-','-','-','-'])
  result_table(rows,[108,72,72,74,68,117])
-head('判断标准与实验边界')
-text('先检查旧类标签精确率是否提升，并同时检查召回率、覆盖率和错判为负类的数量。再看相同输入协议下的最终分割及旧／新类别表现。若标签更准却分割更差，必须检查筛选是否过强或旧类召回受损，不能只展示标签指标。')
+head('本次结论与实验边界')
+if data.get('status')=='complete':
+ text('本次 OLC 提高了旧类标签精确率和 F1，但两个输入协议的最终主头均未提升。固定融合的 aspect672 结果下降约 0.20 点，四项配对图像区间均包含 0。建议正式主线暂时保留无 OLC 的原型恢复版，将当前 OLC 作为实验候选；不能把标签更准写成分割增益，也不能据此声称显著退化。')
+else:
+ text('先检查旧类标签精确率是否提升，并同时检查召回率、覆盖率和错判为负类的数量。再看同输入协议下的最终分割及旧／新类别表现，不能只展示标签指标。')
 text('无 OLC 的完整主线 aspect672 主头为 69.8902，固定半原型融合为 70.0644。OLC 不重新搜索融合比例，不追加 1,200 步，不引入同阶段参考模型。只在这些条件一致时讨论新增收益。')
 head('复现检查与命名')
 text('实现：experiments/restore_proto_olc_v1。双卡记忆同步、重复图像合并、未知标签零分类梯度及两阶段 GPU 冒烟通过。关闭 OLC 的冒烟差约 0.00214 mIoU 点；不修改代码的原入口重复运行差约 0.00172 点，因此没有逐位确定性承诺。',True)

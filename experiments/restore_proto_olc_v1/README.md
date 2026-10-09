@@ -28,31 +28,60 @@ Only final model weights are saved per stage. The small prediction-memory file i
 Run from the project root with the configured runtime:
 
 ```text
-.runtime/restore_proto/venv/bin/python -B -m torch.distributed.run --master_port=49374 --nproc_per_node=2 tools/test_olc.py --ddp
+CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 GLOO_SOCKET_IFNAME=lo .runtime/restore_proto/venv/bin/python -B -m torch.distributed.run --master_addr=127.0.0.1 --master_port=49374 --nproc_per_node=2 tools/test_olc.py --ddp
 .runtime/restore_proto/venv/bin/python -B experiments/restore_proto_olc_v1/run.py --smoke --arms baseline control olc
 .runtime/restore_proto/venv/bin/python -B experiments/restore_proto_olc_v1/run.py --arms olc
 ```
 
 The runner records source hashes, predecessor hashes and commands, uses the existing GPU reservation guard, and restores reservation after each job or failure. It refuses to overwrite partial runs. The `control` arm uses the new trainer with OLC disabled; the `baseline` arm uses the original trainer for smoke equivalence checking. Formal comparison reuses the completed, identical-budget original full chain only after this equivalence check.
 
-Status: two-stage GPU smoke and two-rank memory tests passed; the formal OLC chain is running. The disabled-OLC smoke differs by 0.00214 mIoU points from baseline; an unchanged-baseline repeat differs by 0.00172 points. Runs are not bitwise deterministic, and no exact-equality claim is made. No OLC segmentation gain is claimed yet. Old ALD extra-refinement results are excluded from this method.
+## 已完成的同预算结论
 
+**当前 EMA 双头一致版 OLC 提高了旧类标签精确率和 F1，但没有提高最终分割。正式推荐仍为无 OLC 的原型恢复主线，OLC 保留为实验候选。**
 
-## Step 1 completed; full-chain conclusion still pending
+两组均完成各自 Step 1 → Step 2，每阶段 8,000 步，总 batch 8、seed 0；没有追加续训。下表来自同一 GPU、相同输入的配对评估，融合系数 0.5 在 OLC 开跑前已经固定。
 
-Step 1 finished all 8,000 updates. Its final square448 main-head mIoU is **75.28924**, compared with **74.60657** without OLC (**+0.68267 points**). The prototype head is **74.76473** versus **73.89129** (+0.87344); old foreground improves by 0.42290 points and new foreground by 1.29887 points. CAM / auxiliary CAM diagnostics are 72.16626 / 74.65226, using validation image tags; segmentation inference uses no tags.
-
-| Step-1 updates | No-OLC main | OLC main | Change |
+| 输入 / 预测方式 | 无 OLC | OLC | 变化（点） |
 | --- | ---: | ---: | ---: |
-| 2,000 | 47.08372 | 45.93328 | -1.15043 |
-| 4,000 | 71.51848 | 73.73630 | +2.21782 |
-| 6,000 | 73.97367 | 74.57842 | +0.60475 |
-| 8,000 | 74.60657 | 75.28924 | +0.68267 |
+| square448 / 主头 | 68.7124 | 68.7027 | -0.0097 |
+| square448 / 固定 0.5 原型融合 | 68.8482 | 68.7678 | -0.0803 |
+| aspect672 / 主头 | 69.8904 | 69.8479 | -0.0425 |
+| aspect672 / 固定 0.5 原型融合 | 70.0644 | 69.8638 | -0.2006 |
 
-Do not substitute the peak intermediate difference for the final stage difference. Independent evaluation confirms square448 main 75.28933 (less than 0.001 points from training validation), and aspect672 main 76.16801. These are 16-class Step-1 results, not the final 21-class benchmark.
+aspect672 主头的旧前景变化为 -0.1544 点，新前景为 +0.3231 点。四项配对图像 bootstrap 区间均包含 0，不能称为显著提升或下降。这仅是单 seed、反复查看过的 VOC 验证集结果；图像 bootstrap 不衡量训练种子方差。
 
-Final Step-1 checkpoint SHA256: `43dfc9d5e614d141137f7c5a6e5043797924e22c79c0b559f1cedf7903e5c9db`. Finite-value/prototype-block checks passed. Step 2 is running from this exact checkpoint, with two verified workers on physical GPUs 5 and 6 and batch 4 per rank.
+### 在线标签诊断
 
-The final Step-1 memory audit gives precision 60.2092%, recall 90.5618%, and coverage 98.5005%. Main-head-only decisions from the same EMA give precision 54.2200% and recall 93.5955%. Screening removes 512 false positives while excluding 81 true positives relative to that same-memory comparison. These annotations are joined offline and never enter training. Two correlated teacher heads can still agree on a wrong class, and crop predictions are not equivalent to whole-image presence labels.
+| 阶段 | 规则 | 精确率 % | 召回率 % | F1 % | 覆盖率 % |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Step 1 | 同记忆，仅主头 | 54.22 | 93.60 | 68.66 | 100.00 |
+| Step 1 | OLC | 60.21 | 90.56 | 72.33 | 98.50 |
+| Step 2 | 同记忆，仅主头 | 46.38 | 93.98 | 62.11 | 100.00 |
+| Step 2 | OLC | 49.35 | 92.69 | 64.40 | 98.39 |
 
-Final evaluation will run the no-OLC reference and OLC sequentially on the same GPU, using identical square448/aspect672 inputs and the already fixed 0.5 prototype fusion. This changes evaluation hardware from the earlier CPU reference, not the training budget or prediction rule. Both endpoints will be checked against independent evaluation before comparison.
+这是对同一预测记忆的筛选规则比较，诊断真值仅在独立程序中拼接，不参与训练。它不等价于无 EMA 的独立训练消融。完整图像的静态诊断与随机裁剪记忆输入不同，Step 2 还使用了不同 Step 1 链路产生的教师，不能把两者差异全部归因于 EMA。
+
+### 完整训练曲线（square448 主头）
+
+| 阶段 | 更新 | 无 OLC | OLC | 变化（点） |
+| --- | ---: | ---: | ---: | ---: |
+| Step 1 | 2000 | 47.0837 | 45.9333 | -1.1504 |
+| Step 1 | 4000 | 71.5185 | 73.7363 | +2.2178 |
+| Step 1 | 6000 | 73.9737 | 74.5784 | +0.6048 |
+| Step 1 | 8000 | 74.6066 | 75.2892 | +0.6827 |
+| Step 2 | 2000 | 50.2123 | 53.7851 | +3.5728 |
+| Step 2 | 4000 | 68.0165 | 64.6884 | -3.3281 |
+| Step 2 | 6000 | 68.1181 | 68.4893 | +0.3712 |
+| Step 2 | 8000 | 68.7124 | 68.7027 | -0.0097 |
+
+Step 1 的最终提升没有转化为最终 21 类分割提升。Step 2 在 4,000 步的 bird / sheep 回落随后恢复，不能用中间最高或最低点替代 8,000 步结论。
+
+### 机制与复核边界
+
+- 混淆统计和原型 KD / SEP 保持有效；两个阶段继承原型的归一化方向均发生更新，排除了仅有权重衰减缩放的解释。
+- 未知分类标签零梯度、原损失分母、旧类忽略掩码、双进程记忆一致和重复图像合并测试均通过。
+- 两阶段 GPU 冒烟通过。关闭 OLC 的差异为 0.00214 mIoU 点，原入口重复运行差异为 0.00172 点；没有逐位确定性承诺。
+- 历史负证据可能延迟接纳目标：记忆 0.02 与当前双头概率 0.90 平均后为 0.46，仍判负。这是规则行为的反例诊断，并未证明它导致某个实际类别退化。
+- 旧 ALD 的额外续训结果不纳入 OLC 成绩。保留原主线作为正式配置，不能把“标签更准”直接写成“最终分割更好”。
+
+机器可读的完整对照、类别差异、权重哈希、原型更新核查和训练源码哈希见 [results.json](results.json)。最终模型及必要前驱仍保存在远程工作区；数据和权重不上传 Git。

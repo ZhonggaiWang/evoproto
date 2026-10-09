@@ -69,10 +69,10 @@ def main():
     for name,checkpoint,output in jobs:
         if output.exists():
             existing=json.loads(output.read_text())
-            assert existing['device']=='cuda:0' and existing['checkpoint_sha256']==hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+            assert existing['device']=='cuda' and existing['checkpoint_sha256']==hashlib.sha256(checkpoint.read_bytes()).hexdigest()
             continue
         output.parent.mkdir(parents=True,exist_ok=True)
-        cmd=[sys.executable,'-B',str(ROOT/'tools/evaluate_restore_proto_fusion.py'),'--checkpoint',str(checkpoint),'--stage','2','--output',str(output),'--device','cuda:0','--threads','4']
+        cmd=[sys.executable,'-B',str(ROOT/'tools/evaluate_restore_proto_fusion.py'),'--checkpoint',str(checkpoint),'--stage','2','--output',str(output),'--device','cuda','--threads','4']
         write(CONTROL/'postprocess_state.json',dict(status='paired_gpu_fusion_running',arm=name,pid=os.getpid(),time=time.time()))
         with output.with_suffix('.log').open('a') as f:
             child=subprocess.Popen(cmd,cwd=ROOT,env=gpu_env,stdout=f,stderr=subprocess.STDOUT,start_new_session=True)
