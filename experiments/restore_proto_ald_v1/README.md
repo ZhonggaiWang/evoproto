@@ -1,6 +1,6 @@
-# Optional ALD refinement candidate — not yet GPU-validated or launched
+# Historical extra-training ALD candidate — excluded from the current method
 
-This directory prepares an optional final-stage adaptation of ALD V9 for the explicit-prototype restoration. It is not the current reported final method. The complete `restore_proto_v1` chains and their ablations continue independently. Activate this candidate only after corrected square448/aspect672 and fusion evaluations are available, and after GPU smoke checks.
+The two full-model arms completed GPU validation and 1,200 extra training updates. Main-head aspect672 mIoU was 70.09234 for matched continuation and 70.56434 with the old ALD candidate (square448: 69.01756 and 69.07516). These are extra-training results, not the same-budget EvoProto baseline. On 2026-10-09 the user rejected this refinement protocol. Do not launch further arms from this directory as part of the current study. The new OLC module in `experiments/restore_proto_olc_v1` corrects old-class image labels inside the original 8,000 updates per stage. Historical design details follow for provenance only.
 
 ## Controlled protocol
 
@@ -29,7 +29,7 @@ CPU semantic checks cover unknown-versus-negative labels, conflicts, padding, te
 .runtime/restore_proto/venv/bin/python -B -m torch.distributed.run --master_addr=127.0.0.1 --master_port=49369 --nproc_per_node=2 -m experiments.restore_proto_ald_v1.test_distributed
 ```
 
-The entry `train.py` requires `--step 2 --spg 4 --no-pretrained --loss_warmup_iters 0 --start-checkpoint <own-stage2-final> --prev_checkpoint <own-stage1-final> --initial-confusion <own-stage2-confusion.json>`; enable `--refine-ald --image-evidence <own-cache.json>` only for ALD arms. Supply the existing VOC paths and an isolated work directory. GPU cache generation, both-arm smoke checks, candidate activation, formal training and results remain pending. No benefit is claimed yet.
+The entry `train.py` requires `--step 2 --spg 4 --no-pretrained --loss_warmup_iters 0 --start-checkpoint <own-stage2-final> --prev_checkpoint <own-stage1-final> --initial-confusion <own-stage2-confusion.json>`; enable `--refine-ald --image-evidence <own-cache.json>` only for ALD arms. Supply the existing VOC paths and an isolated work directory. GPU cache generation, both-arm smoke checks and the full-model matched pair are complete. Further old-ALD ablations are canceled under the revised scope.
 
 Both GPU entry points require `CUDA_VISIBLE_DEVICES=GPU-82e069d7-189e-06b0-faed-b08e1794a981,GPU-2d0a204c-101b-1149-06e1-e3528d9f38bf` and reject an unset/different mapping. Do not launch them while the formal restoration coordinator is still using these cards.
 
