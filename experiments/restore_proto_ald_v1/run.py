@@ -109,6 +109,9 @@ def main():
                 smoke=read(study/'smoke'/arm/'10-5/step2/completion.json')
                 assert smoke['source_sha256']==source and smoke['lineage']==lineage
                 assert smoke['gpu_preflight_passed']
+            lineage_path=directory/'lineage.json'
+            if lineage_path.exists():assert read(lineage_path)==lineage,'Arm predecessor changed'
+            else:write(lineage_path,lineage)
             completion=directory/'completion.json'
             if completion.exists():
                 saved=read(completion);assert saved['source_sha256']==source and saved['lineage']==lineage
@@ -123,7 +126,12 @@ def main():
             command=torchrun('experiments/restore_proto_ald_v1/train.py')+['--variant',variant,'--step','2','--spg','4','--max_iters',str(iterations),'--eval_iters',str(iterations),'--log_iters','1' if args.mode=='smoke' else '50','--lr','2e-6','--no-pretrained','--loss_warmup_iters','0','--w_proto_kd','0','--w_proto_sep','0','--save_ckpt','--start-checkpoint',str(start),'--prev_checkpoint',str(teacher),'--initial-confusion',str(graph),'--work_dir',str(study/args.mode/arm),'--data_folder','/data/zhonggai/coco/PascalVOC12','--seg_label_dir','/data/zhonggai/coco/PascalVOC12/SegmentationClass','--val_label_dir','/data/zhonggai/coco/PascalVOC12/SegmentationClass']
             if ald:command+=['--refine-ald','--image-evidence',str(evidence)]
             if args.mode=='smoke':command+=['--train_limit','32','--val_limit','8']
-            execute(command,directory/'launcher.log')
+            final=directory/'checkpoints/model_final.pth'
+            if not final.exists():execute(command,directory/'launcher.log')
+            else:
+                config=read(directory/'config.json')
+                assert config['variant']==variant and config['refine_ald']==ald and config['max_iters']==iterations and config['spg']==4
+                assert config['start_checkpoint']==str(start) and config['prev_checkpoint']==str(teacher)
             checks=[read(directory/f'refinement_preflight_rank{rank}.json') for rank in range(2)]
             assert all(c['passed'] and c['teacher_and_reference_frozen'] and c['world_size']==2 and c['batch_per_rank']==4 and c['variant']==variant and c['ald']==ald for c in checks)
             final=directory/'checkpoints/model_final.pth'
@@ -137,9 +145,11 @@ def main():
             del net,raw
             metrics=json.loads((directory/'metrics.jsonl').read_text().splitlines()[-1]);assert metrics['iteration']==iterations
             if args.mode=='formal':
-                execute(torchrun('experiments/restore_proto_v1/evaluate.py')+['--checkpoint',str(final),'--stage','2','--output',str(directory/'evaluation.json'),'--expected-square',str(metrics['all_miou'])],directory/'evaluation.log')
+                if not (directory/'evaluation.json').exists():
+                    execute(torchrun('experiments/restore_proto_v1/evaluate.py')+['--checkpoint',str(final),'--stage','2','--output',str(directory/'evaluation.json'),'--expected-square',str(metrics['all_miou'])],directory/'evaluation.log')
                 evaluation=read(directory/'evaluation.json');assert evaluation['histogram_label_dtype']=='int64' and evaluation['images']==1449
                 assert evaluation['checkpoint_sha256']==digest(final)
+                assert abs(evaluation['results']['square448']['main']['miou']-metrics['all_miou'])<.2
             assert source_hashes()==source,'Candidate sources changed during execution'
             write(completion,{'status':'completed','mode':args.mode,'arm':arm,'source_sha256':source,'lineage':lineage,'checkpoint_sha256':digest(final),'checkpoint':str(final),'gpu_preflight_passed':True,'preflight':checks,'metrics':metrics,'activation_rationale':args.decision,'time':time.time()})
         write(study/'state.json',{'status':'completed','mode':args.mode,'arms':args.arms,'time':time.time(),'pid':os.getpid()})
