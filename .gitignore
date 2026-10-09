@@ -29,3 +29,6 @@ work_dir_voc_wseg/
 !*.example
 *.pem
 *.key
+
+# Report rendering scratch
+/tmp/pdfs/
