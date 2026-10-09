@@ -245,16 +245,19 @@ for stage in (1,2):
 result_table(rows,[208,101,101,101])
 text('精确率：接纳的旧类正标签中有多少为真；召回率：真实存在的旧类有多少被接纳，未知中的真实正类也计为遗漏；覆盖率：所有图像-旧类组合中，有多少作出了正或负判断。只看被接纳标签的准确率，会掩盖大量弃用标签的问题。')
 head('训练内在线记忆诊断')
-rows=[['阶段 / 已完成更新','精确率','召回率','覆盖率']]
+rows=[['阶段 / 更新 / 规则','精确率','召回率','F1','覆盖率']]
 for stage in (1,2):
  directory=ROOT/f'runs/restore_proto_olc_v1/formal/olc/10-5/step{stage}'
  files=list(directory.glob('olc_label_audit_*.json'))
  if files:
-  d=max((json.loads(p.read_text()) for p in files),key=lambda r:r['iteration']);r=d['policies']['olc_memory']
-  rows.append([f'Step {stage} / {d["iteration"]}']+[format(100*r[k],'.2f') for k in ['precision','recall','coverage']])
- else:rows.append([f'Step {stage} / 待诊断','-','-','-'])
-result_table(rows,[208,101,101,101])
-text('在线结果来自当前训练记忆，随机裁剪可能不包含整图中的某个类别，所以图像真值只能诊断整图存在性。另同时报告“同一 EMA 仅主头”的对照，帮助区分双头一致筛选与记忆的影响；它仍不等价于一次独立的无 EMA 训练消融。',True)
+  d=max((json.loads(p.read_text()) for p in files),key=lambda r:r['iteration'])
+  for key,label in [('main_head_same_ema','仅主头'),('olc_memory','OLC')]:
+   r=d['policies'][key]
+   rows.append([f'{stage} / {d["iteration"]} / {label}']+[format(100*r[k],'.2f') for k in ['precision','recall','f1','coverage']])
+ else:rows.append([f'{stage} / 待诊断','-','-','-','-'])
+result_table(rows,[191,80,80,80,80])
+text('在线表中的“仅主头”与 OLC 共用同一预测记忆，可以观察双头一致筛选的取舍；F1 综合精确率和召回率。在线记忆来自随机裁剪，与上方的整图输入不同，不能将两表差异全部归因于 EMA。它也不等价于一次独立的无 EMA 训练消融。',True)
+text('两个冻结的教师头仍可能同时误判。OLC 记忆会在训练中持续更新，但并不保证标签质量随迭代单调提高；是否值得采用，应结合完整增量链的分割结果判断。',True)
 
 page(12,'OLC 是否改善最终分割','12 / 同预算验证与采用条件')
 comparison=ROOT/'runs/restore_proto_olc_v1/comparison.json'

@@ -1,5 +1,5 @@
 """Verify the full same-budget OLC comparison, then summarize paired results."""
-import argparse,hashlib,json,sys
+import argparse,hashlib,json,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 import numpy as np
@@ -70,7 +70,13 @@ def main():
         for key in compare_keys:assert bc[key]==cc[key],(stage,key,bc[key],cc[key])
         commands={name:read(path/'command.json') for name,path in [('baseline',bd),('olc',cd)]}
         assert all('--nproc_per_node=2' in cmd for cmd in commands.values())
+        prototype_audit=cd/'prototype_direction_audit.json'
+        if not prototype_audit.exists():
+            subprocess.run([sys.executable,'-B',str(ROOT/'tools/audit_olc_prototypes.py'),'--stage-dir',str(cd)],cwd=ROOT,check=True)
+        prototype_record=read(prototype_audit)
+        assert prototype_record['direction_changed_beyond_decay']
         receipt=read(cd/'final_receipt.json')
+        assert prototype_record['checkpoint_sha256']==receipt['sha256']
         assert hashlib.sha256(Path(receipt['path']).read_bytes()).hexdigest()==receipt['sha256']
         previous=read(cd/'predecessor.json');lineage[str(stage)]=previous
         assert hashlib.sha256(Path(previous['path']).read_bytes()).hexdigest()==previous['sha256']
