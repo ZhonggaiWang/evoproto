@@ -1,12 +1,28 @@
 # EvoProto
 
-This repository contains a source snapshot of the EvoProto research workspace, including the latest unified method and earlier experiment implementations.
+This repository contains a source snapshot of the EvoProto research workspace, including the current explicit-prototype restoration and earlier experiment implementations.
 
-## Current method
+## 当前方法：保留显式 prototype 的恢复版
 
-The current preferred implementation is [`experiments/unified_relations_v4`](experiments/unified_relations_v4). ALD calibrates reference evidence, a directed graph selects supported conflicts, KD preserves between-group relations, and SEP corrects within-pair ordering. See the [complete method description](experiments/unified_relations_v4/method.txt).
+本分支的当前研究实现是 **[experiments/restore_proto_v1](experiments/restore_proto_v1/README.md)**，保留以下主线：
 
-The recorded VOC 10-5 final-stage validation result is **71.516 mIoU** with aspect-preserving input area approximately 672 squared, or **70.080** with square 448 input. This is 300-step segmentation-head refinement from an existing ALDv9 checkpoint, not an independent all-stage incremental rerun. At the same inference setting, the parent result is 71.454; do not attribute its inherited performance to this refinement.
+- 每个类别都有可学习的 512 维 prototype，旧原型继承、新原型随训练优化。
+- 从训练弱证据估计混淆关系，实际用于 KD 权重和 SEP 对手选择。
+- 原型像素监督、原型预测 KD、原型预测 SEP 共同优化原型及共享特征，并保留较弱的主头辅助项。
+- VOC 10-5 完整增量训练；两卡各 batch 4，总 batch 8；每个增量阶段 8,000 步。
+- 同配置运行去混淆、去原型训练约束的消融；仅保留阶段最终权重及必要前驱。
+
+当前 ALD 关闭。完整最终评估和消融仍在进行，不能把历史 71.x 成绩当成本恢复版已取得的结果。实现、损失公式、运行前提和比较口径见 [恢复版说明](experiments/restore_proto_v1/README.md)。核心逻辑见 [mechanism.py](experiments/restore_proto_v1/mechanism.py)。
+
+下载这一版时请指定分支：
+
+```sh
+git clone --branch codex/restore-proto-4090 https://github.com/ZhonggaiWang/evoproto.git
+```
+
+## 历史方法：unified_relations_v4
+
+[unified_relations_v4](experiments/unified_relations_v4) 保留用于历史追溯，不是本分支当前推荐的原型恢复版入口。其历史 VOC 10-5 记录为保持长宽比、面积约 672 平方时 **71.516 mIoU**，或 square448 时 **70.080**。这是从已有 ALDv9 权重进行 300 步分割头细化的结果，不是本轮独立完整增量链重跑；对应父模型为 71.454，不能把继承的性能归因于该细化。
 
 ## Repository scope and reproduction requirements
 
@@ -22,7 +38,7 @@ Imported on 2026-10-08 from the working tree based on upstream commit `f954f43`,
 
 ---
 
-## EvoProto ALD 对照
+## 历史记录：EvoProto ALD 对照
 
 当前使用项目内 conda 环境 `.runtime/env`，在 VOC 10-5 上比较 ALD 关闭、旧融合、保留新拒绝区域 ignore、只在 teacher 背景区域保留 ignore 四组。KD/SEP 权重均为 0；四组共享原正式 step0，并统一忽略真实图像框外的 padding。复现与指标口径见 [ALD 实验协议](docs/ald_fusion_protocol.md)。 当前运行状态与验证记录见 [ALD 实验记录](docs/ald_fusion_results.md)。
 
@@ -35,11 +51,11 @@ python -B tools/run_ald_study.py --output runs/ald_reproduction --gpus 0,1,2,3
 
 每组独占一个 runner 管理的 GPU 任务，完成自己的 step1 后立即启动 step2。正式预算为每阶段 8,000 次迭代，全局 batch 为 8。运行器拒绝覆盖未完成阶段；输出目录应使用新名称。训练、缓存和日志均位于本项目，外部数据只读。
 
-## ALD 新类 gate 后续对照
+## 历史记录：ALD 新类 gate 后续对照
 
 已准备单变量 `new_fallback`：legacy gate 丢掉全部正 NEW 时，额外保留最强的一个当前新类。两臂均采用 legacy 融合，自己的 legacy 控制与候选共享初始化和预算。20项CPU gate测试、训练副本合同及4/4 CUDA smoke通过，正式训练等待GPU0/1主任务各自完成后接续。方法与风险见 [NEW gate协议](docs/ald_gate_new_protocol.md)，验证范围见 [实验记录](docs/ald_gate_new_results.md)。最小独立训练副本位于同一项目的 `experiments/ald_gate_new_v1`，以保留在途主实验的冻结源码。
 
-## EvoProto 固定权重基线
+## 历史记录：EvoProto 固定权重基线
 
 此前 BASE、固定原型方向 KD、前景原型 SEP 和 KD+SEP 的正式实验已完成 9/9 阶段。新增约束权重为 0.1、分离 margin 为 0，ALD 和 confusion reweight 均关闭。方法见 [基线协议](docs/fixed_baseline_protocol.md)，结果见 [基线报告](docs/fixed_baseline_results.md)。
 
