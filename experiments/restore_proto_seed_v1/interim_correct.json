@@ -1,0 +1,1601 @@
+{
+  "time": 1791574850.7696958,
+  "status": "correct arm complete; ignore and no_graph controls pending",
+  "stages": {
+    "1": {
+      "checkpoint_sha256": "93ed72243fc06794d74b28dc937b92f251643b0cc2d0696c25bbd0c77d4aed1e",
+      "predecessor_sha256": "4f298e14721630cf3c66ba4f6af04bd198ebeaf77adc6b7b07ab8403ad0893b5",
+      "prototype_audit": {
+        "checkpoint_sha256": "93ed72243fc06794d74b28dc937b92f251643b0cc2d0696c25bbd0c77d4aed1e",
+        "predecessor_sha256": "4f298e14721630cf3c66ba4f6af04bd198ebeaf77adc6b7b07ab8403ad0893b5",
+        "prototype_blocks": {
+          "decoder.class_prototypes.0.prototype": [
+            11,
+            512
+          ],
+          "decoder.class_prototypes.1.prototype": [
+            5,
+            512
+          ]
+        },
+        "old_foreground_classes": 10,
+        "mean_old_cosine": 0.9662332593773686,
+        "max_old_direction_displacement": 0.29501787305904736,
+        "per_old_class_displacement": [
+          0.28564391835473796,
+          0.2607555863794332,
+          0.29501787305904736,
+          0.2623190277921836,
+          0.2727899499205057,
+          0.2773369656235508,
+          0.24980939702194593,
+          0.224933300473186,
+          0.23439798389097302,
+          0.22501062670925218
+        ],
+        "direction_changed_beyond_decay": true,
+        "interpretation": "Direction changes plus active loss/source checks support actual prototype optimization; this is not evidence of segmentation benefit by itself."
+      },
+      "config_differences": {
+        "ckpt_dir": [
+          "/data/zhonggai/home/python-work-space/WILSS/evoproto/runs/restore_proto_v1/formal/full/10-5/step1/checkpoints",
+          "/data/zhonggai/home/python-work-space/WILSS/evoproto/runs/restore_proto_seed_v1/formal/correct/10-5/step1/checkpoints"
+        ],
+        "work_dir": [
+          "/data/zhonggai/home/python-work-space/WILSS/evoproto/runs/restore_proto_v1/formal/full/10-5/step1",
+          "/data/zhonggai/home/python-work-space/WILSS/evoproto/runs/restore_proto_seed_v1/formal/correct/10-5/step1"
+        ],
+        "pred_dir": [
+          "/data/zhonggai/home/python-work-space/WILSS/evoproto/runs/restore_proto_v1/formal/full/10-5/step1/predictions",
+          "/data/zhonggai/home/python-work-space/WILSS/evoproto/runs/restore_proto_seed_v1/formal/correct/10-5/step1/predictions"
+        ],
+        "seed_mode": [
+          null,
+          "correct"
+        ]
+      }
+    },
+    "2": {
+      "checkpoint_sha256": "380fd15014692ad5a80737b3faa2c7328bc0a07b43634def1551f2ed43f0dbac",
+      "predecessor_sha256": "93ed72243fc06794d74b28dc937b92f251643b0cc2d0696c25bbd0c77d4aed1e",
+      "prototype_audit": {
+        "checkpoint_sha256": "380fd15014692ad5a80737b3faa2c7328bc0a07b43634def1551f2ed43f0dbac",
+        "predecessor_sha256": "93ed72243fc06794d74b28dc937b92f251643b0cc2d0696c25bbd0c77d4aed1e",
+        "prototype_blocks": {
+          "decoder.class_prototypes.0.prototype": [
+            11,
+            512
+          ],
+          "decoder.class_prototypes.1.prototype": [
+            5,
+            512
+          ],
+          "decoder.class_prototypes.2.prototype": [
+            5,
+            512
+          ]
+        },
+        "old_foreground_classes": 15,
+        "mean_old_cosine": 0.9500075347378608,
+        "max_old_direction_displacement": 0.40380827696132965,
+        "per_old_class_displacement": [
+          0.29278358646961244,
+          0.31300674496826364,
+          0.288763584133135,
+          0.31546522182704057,
+          0.3088857724294318,
+          0.2823323418019396,
+          0.302573195541099,
+          0.27468086245621837,
+          0.25533202882741346,
+          0.274783724028274,
+          0.32014102461429295,
+          0.37679253429859383,
+          0.40380827696132965,
+          0.3692784012407827,
+          0.3262860939678022
+        ],
+        "direction_changed_beyond_decay": true,
+        "interpretation": "Direction changes plus active loss/source checks support actual prototype optimization; this is not evidence of segmentation benefit by itself."
+      },
+      "config_differences": {
+        "prev_checkpoint": [
+          "/data/zhonggai/home/python-work-space/WILSS/evoproto/runs/restore_proto_v1/formal/full/10-5/step1/checkpoints/model_final.pth",
+          "/data/zhonggai/home/python-work-space/WILSS/evoproto/runs/restore_proto_seed_v1/formal/correct/10-5/step1/checkpoints/model_final.pth"
+        ],
+        "ckpt_dir": [
+          "/data/zhonggai/home/python-work-space/WILSS/evoproto/runs/restore_proto_v1/formal/full/10-5/step2/checkpoints",
+          "/data/zhonggai/home/python-work-space/WILSS/evoproto/runs/restore_proto_seed_v1/formal/correct/10-5/step2/checkpoints"
+        ],
+        "work_dir": [
+          "/data/zhonggai/home/python-work-space/WILSS/evoproto/runs/restore_proto_v1/formal/full/10-5/step2",
+          "/data/zhonggai/home/python-work-space/WILSS/evoproto/runs/restore_proto_seed_v1/formal/correct/10-5/step2"
+        ],
+        "pred_dir": [
+          "/data/zhonggai/home/python-work-space/WILSS/evoproto/runs/restore_proto_v1/formal/full/10-5/step2/predictions",
+          "/data/zhonggai/home/python-work-space/WILSS/evoproto/runs/restore_proto_seed_v1/formal/correct/10-5/step2/predictions"
+        ],
+        "seed_mode": [
+          null,
+          "correct"
+        ]
+      }
+    }
+  },
+  "source_hashes_verified": true,
+  "matched_1449_image_histograms_verified": true,
+  "comparisons": {
+    "square448": {
+      "0.0": {
+        "candidate_minus_reference_pp": -0.7494160194798098,
+        "paired_image_bootstrap_95_percentile_interval": [
+          -1.3539674390742593,
+          -0.12089850288463248
+        ],
+        "bootstrap_samples": 1000,
+        "seed": 20261009,
+        "images": 1449,
+        "baseline": 68.71240335413981,
+        "correct": 67.96298733466
+      },
+      "0.5": {
+        "candidate_minus_reference_pp": -0.7878909471094886,
+        "paired_image_bootstrap_95_percentile_interval": [
+          -1.4108297832628776,
+          -0.14696369078501315
+        ],
+        "bootstrap_samples": 1000,
+        "seed": 20261009,
+        "images": 1449,
+        "baseline": 68.84818395179013,
+        "correct": 68.06029300468064
+      }
+    },
+    "aspect672": {
+      "0.0": {
+        "candidate_minus_reference_pp": -0.867332344666039,
+        "paired_image_bootstrap_95_percentile_interval": [
+          -1.5515752115506742,
+          -0.15821366396575207
+        ],
+        "bootstrap_samples": 1000,
+        "seed": 20261009,
+        "images": 1449,
+        "baseline": 69.89037018263805,
+        "correct": 69.02303783797201
+      },
+      "0.5": {
+        "candidate_minus_reference_pp": -0.911305270576932,
+        "paired_image_bootstrap_95_percentile_interval": [
+          -1.608163934199768,
+          -0.20197047925102155
+        ],
+        "bootstrap_samples": 1000,
+        "seed": 20261009,
+        "images": 1449,
+        "baseline": 70.0644009317374,
+        "correct": 69.15309566116046
+      }
+    }
+  },
+  "directional_metrics": {
+    "status": "waiting",
+    "matrix_orientation": "rows=ground truth, columns=prediction; confirmed from evaluator bincount(gt*21+prediction)",
+    "primary_partition": "Step2: old foreground1..15, new16..20",
+    "auxiliary_partition": "Initial10 vs subsequently introduced10; descriptive only",
+    "prediction_uses_image_tags": false,
+    "arms": {
+      "baseline": {
+        "checkpoint_sha256": "ede105f3dc898f481da6b8a4c99d36407cac31474804f67aeeba5d83eec43722",
+        "source": "runs/restore_proto_olc_v1/reference_full_gpu/fusion_evaluation.json",
+        "histogram_file_sha256": "b5492b995e85276ddc49f5a802c05184be406b56d0b54fcec3983eca2c9b9d04",
+        "protocols": {
+          "square448": {
+            "0.0": {
+              "miou": 68.71240335413981,
+              "step2_partition": {
+                "correct_new_pixels": 9026561,
+                "correct_new_rate": 0.7316443929945796,
+                "new_predicted_other_new_pixels": 725,
+                "new_predicted_other_new_rate": 5.8764593173532e-05,
+                "new_predicted_background_rate": 0.17051174882537684,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15
+                ],
+                "new_ids": [
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 12337361,
+                "old_gt_pixels": 53003298,
+                "new_predicted_old_pixels": 1206410,
+                "new_predicted_old_rate": 0.09778509358687,
+                "old_predicted_new_pixels": 621750,
+                "old_predicted_new_rate": 0.011730402134599248,
+                "new_predicted_background_pixels": 2103665,
+                "per_new_class": {
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 26881,
+                    "predicted_old_rate": 0.021773714078353296,
+                    "predicted_background_pixels": 422917
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 155004,
+                    "predicted_old_rate": 0.08019639849855521,
+                    "predicted_background_pixels": 105318
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 640826,
+                    "predicted_old_rate": 0.18418589143877892,
+                    "predicted_background_pixels": 799778
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 377411,
+                    "predicted_old_rate": 0.09630276052212232,
+                    "predicted_background_pixels": 493219
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 6288,
+                    "predicted_old_rate": 0.003549025429038117,
+                    "predicted_background_pixels": 282433
+                  }
+                }
+              },
+              "initial_partition": {
+                "correct_new_pixels": 28678745,
+                "correct_new_rate": 0.7455705762306483,
+                "new_predicted_other_new_pixels": 1254982,
+                "new_predicted_other_new_rate": 0.032626171504335055,
+                "new_predicted_background_rate": 0.1603287101428553,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10
+                ],
+                "new_ids": [
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 38465500,
+                "old_gt_pixels": 26875159,
+                "new_predicted_old_pixels": 2364649,
+                "new_predicted_old_rate": 0.06147454212216142,
+                "old_predicted_new_pixels": 400296,
+                "old_predicted_new_rate": 0.014894646762834036,
+                "new_predicted_background_pixels": 6167124,
+                "per_new_class": {
+                  "diningtable": {
+                    "gt_pixels": 2864750,
+                    "predicted_old_pixels": 142339,
+                    "predicted_old_rate": 0.04968636006632341,
+                    "predicted_background_pixels": 1018953
+                  },
+                  "dog": {
+                    "gt_pixels": 5034389,
+                    "predicted_old_pixels": 479069,
+                    "predicted_old_rate": 0.09515931327515613,
+                    "predicted_background_pixels": 497164
+                  },
+                  "horse": {
+                    "gt_pixels": 2641937,
+                    "predicted_old_pixels": 297510,
+                    "predicted_old_rate": 0.11261055808673712,
+                    "predicted_background_pixels": 174159
+                  },
+                  "motorbike": {
+                    "gt_pixels": 2587440,
+                    "predicted_old_pixels": 170200,
+                    "predicted_old_rate": 0.06577930309495099,
+                    "predicted_background_pixels": 212109
+                  },
+                  "person": {
+                    "gt_pixels": 12999623,
+                    "predicted_old_pixels": 418927,
+                    "predicted_old_rate": 0.032226088402717526,
+                    "predicted_background_pixels": 2161074
+                  },
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 4539,
+                    "predicted_old_rate": 0.0036766075741842047,
+                    "predicted_background_pixels": 422917
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 151716,
+                    "predicted_old_rate": 0.07849524395890946,
+                    "predicted_background_pixels": 105318
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 621101,
+                    "predicted_old_rate": 0.17851654171103706,
+                    "predicted_background_pixels": 799778
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 74371,
+                    "predicted_old_rate": 0.018977010746350158,
+                    "predicted_background_pixels": 493219
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 4877,
+                    "predicted_old_rate": 0.002752639474780359,
+                    "predicted_background_pixels": 282433
+                  }
+                }
+              }
+            },
+            "0.5": {
+              "miou": 68.84818395179013,
+              "step2_partition": {
+                "correct_new_pixels": 8979093,
+                "correct_new_rate": 0.7277968927066332,
+                "new_predicted_other_new_pixels": 820,
+                "new_predicted_other_new_rate": 6.646478124454655e-05,
+                "new_predicted_background_rate": 0.17697682672980064,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15
+                ],
+                "new_ids": [
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 12337361,
+                "old_gt_pixels": 53003298,
+                "new_predicted_old_pixels": 1174021,
+                "new_predicted_old_rate": 0.09515981578232167,
+                "old_predicted_new_pixels": 596697,
+                "old_predicted_new_rate": 0.011257733433870473,
+                "new_predicted_background_pixels": 2183427,
+                "per_new_class": {
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 25378,
+                    "predicted_old_rate": 0.020556278259010078,
+                    "predicted_background_pixels": 457453
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 153318,
+                    "predicted_old_rate": 0.07932409115249599,
+                    "predicted_background_pixels": 112592
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 621002,
+                    "predicted_old_rate": 0.17848808718008413,
+                    "predicted_background_pixels": 819866
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 368733,
+                    "predicted_old_rate": 0.0940884229542958,
+                    "predicted_background_pixels": 505914
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 5590,
+                    "predicted_old_rate": 0.003155065545216774,
+                    "predicted_background_pixels": 287602
+                  }
+                }
+              },
+              "initial_partition": {
+                "correct_new_pixels": 28519230,
+                "correct_new_rate": 0.7414236133678231,
+                "new_predicted_other_new_pixels": 1191285,
+                "new_predicted_other_new_rate": 0.030970220067333066,
+                "new_predicted_background_rate": 0.16898815821970337,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10
+                ],
+                "new_ids": [
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 38465500,
+                "old_gt_pixels": 26875159,
+                "new_predicted_old_pixels": 2254771,
+                "new_predicted_old_rate": 0.05861800834514045,
+                "old_predicted_new_pixels": 396431,
+                "old_predicted_new_rate": 0.014750833660184114,
+                "new_predicted_background_pixels": 6500214,
+                "per_new_class": {
+                  "diningtable": {
+                    "gt_pixels": 2864750,
+                    "predicted_old_pixels": 133663,
+                    "predicted_old_rate": 0.04665782354481194,
+                    "predicted_background_pixels": 1092868
+                  },
+                  "dog": {
+                    "gt_pixels": 5034389,
+                    "predicted_old_pixels": 456481,
+                    "predicted_old_rate": 0.0906725721830395,
+                    "predicted_background_pixels": 541520
+                  },
+                  "horse": {
+                    "gt_pixels": 2641937,
+                    "predicted_old_pixels": 291468,
+                    "predicted_old_rate": 0.11032359969219553,
+                    "predicted_background_pixels": 197388
+                  },
+                  "motorbike": {
+                    "gt_pixels": 2587440,
+                    "predicted_old_pixels": 166974,
+                    "predicted_old_rate": 0.06453251089880345,
+                    "predicted_background_pixels": 238786
+                  },
+                  "person": {
+                    "gt_pixels": 12999623,
+                    "predicted_old_pixels": 372382,
+                    "predicted_old_rate": 0.028645599953167872,
+                    "predicted_background_pixels": 2246225
+                  },
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 3747,
+                    "predicted_old_rate": 0.003035084507703947,
+                    "predicted_background_pixels": 457453
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 150142,
+                    "predicted_old_rate": 0.07768088348281384,
+                    "predicted_background_pixels": 112592
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 600380,
+                    "predicted_old_rate": 0.1725609221567385,
+                    "predicted_background_pixels": 819866
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 75251,
+                    "predicted_old_rate": 0.01920155753820166,
+                    "predicted_background_pixels": 505914
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 4283,
+                    "predicted_old_rate": 0.0024173784848235138,
+                    "predicted_background_pixels": 287602
+                  }
+                }
+              }
+            }
+          },
+          "aspect672": {
+            "0.0": {
+              "miou": 69.89037018263805,
+              "step2_partition": {
+                "correct_new_pixels": 9208152,
+                "correct_new_rate": 0.746363180910407,
+                "new_predicted_other_new_pixels": 493,
+                "new_predicted_other_new_rate": 3.995992335800176e-05,
+                "new_predicted_background_rate": 0.15400538251251625,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15
+                ],
+                "new_ids": [
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 12337361,
+                "old_gt_pixels": 53003298,
+                "new_predicted_old_pixels": 1228696,
+                "new_predicted_old_rate": 0.09959147665371873,
+                "old_predicted_new_pixels": 668710,
+                "old_predicted_new_rate": 0.012616384738927,
+                "new_predicted_background_pixels": 1900020,
+                "per_new_class": {
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 29188,
+                    "predicted_old_rate": 0.023642393010638592,
+                    "predicted_background_pixels": 405183
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 123084,
+                    "predicted_old_rate": 0.0636815405589286,
+                    "predicted_background_pixels": 73434
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 638660,
+                    "predicted_old_rate": 0.18356334079186948,
+                    "predicted_background_pixels": 777786
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 425828,
+                    "predicted_old_rate": 0.10865717190970667,
+                    "predicted_background_pixels": 391613
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 11936,
+                    "predicted_old_rate": 0.0067368268958331685,
+                    "predicted_background_pixels": 252004
+                  }
+                }
+              },
+              "initial_partition": {
+                "correct_new_pixels": 29338486,
+                "correct_new_rate": 0.7627220756262105,
+                "new_predicted_other_new_pixels": 1299260,
+                "new_predicted_other_new_rate": 0.03377728094006317,
+                "new_predicted_background_rate": 0.1406672732708531,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10
+                ],
+                "new_ids": [
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 38465500,
+                "old_gt_pixels": 26875159,
+                "new_predicted_old_pixels": 2416917,
+                "new_predicted_old_rate": 0.06283337016287323,
+                "old_predicted_new_pixels": 423047,
+                "old_predicted_new_rate": 0.0157411905916538,
+                "new_predicted_background_pixels": 5410837,
+                "per_new_class": {
+                  "diningtable": {
+                    "gt_pixels": 2864750,
+                    "predicted_old_pixels": 153736,
+                    "predicted_old_rate": 0.05366471768915263,
+                    "predicted_background_pixels": 919261
+                  },
+                  "dog": {
+                    "gt_pixels": 5034389,
+                    "predicted_old_pixels": 643203,
+                    "predicted_old_rate": 0.12776187934623248,
+                    "predicted_background_pixels": 513389
+                  },
+                  "horse": {
+                    "gt_pixels": 2641937,
+                    "predicted_old_pixels": 299065,
+                    "predicted_old_rate": 0.11319914138755012,
+                    "predicted_background_pixels": 125016
+                  },
+                  "motorbike": {
+                    "gt_pixels": 2587440,
+                    "predicted_old_pixels": 103438,
+                    "predicted_old_rate": 0.03997696564944501,
+                    "predicted_background_pixels": 165298
+                  },
+                  "person": {
+                    "gt_pixels": 12999623,
+                    "predicted_old_pixels": 372505,
+                    "predicted_old_rate": 0.028655061766021984,
+                    "predicted_background_pixels": 1787853
+                  },
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 2395,
+                    "predicted_old_rate": 0.001939959273005325,
+                    "predicted_background_pixels": 405183
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 118878,
+                    "predicted_old_rate": 0.06150542863868833,
+                    "predicted_background_pixels": 73434
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 615987,
+                    "predicted_old_rate": 0.1770466783646405,
+                    "predicted_background_pixels": 777786
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 98891,
+                    "predicted_old_rate": 0.025233700901121585,
+                    "predicted_background_pixels": 391613
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 8819,
+                    "predicted_old_rate": 0.00497755331722124,
+                    "predicted_background_pixels": 252004
+                  }
+                }
+              }
+            },
+            "0.5": {
+              "miou": 70.0644009317374,
+              "step2_partition": {
+                "correct_new_pixels": 9165456,
+                "correct_new_rate": 0.7429024732274593,
+                "new_predicted_other_new_pixels": 416,
+                "new_predicted_other_new_rate": 3.371871828991629e-05,
+                "new_predicted_background_rate": 0.16028857386924156,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15
+                ],
+                "new_ids": [
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 12337361,
+                "old_gt_pixels": 53003298,
+                "new_predicted_old_pixels": 1193951,
+                "new_predicted_old_rate": 0.09677523418500926,
+                "old_predicted_new_pixels": 639315,
+                "old_predicted_new_rate": 0.012061796607448843,
+                "new_predicted_background_pixels": 1977538,
+                "per_new_class": {
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 27871,
+                    "predicted_old_rate": 0.022575617911453617,
+                    "predicted_background_pixels": 437537
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 122953,
+                    "predicted_old_rate": 0.06361376341638189,
+                    "predicted_background_pixels": 79984
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 611074,
+                    "predicted_old_rate": 0.17563458633866352,
+                    "predicted_background_pixels": 798177
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 421237,
+                    "predicted_old_rate": 0.10748570108994503,
+                    "predicted_background_pixels": 407398
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 10816,
+                    "predicted_old_rate": 0.006104684961907804,
+                    "predicted_background_pixels": 254442
+                  }
+                }
+              },
+              "initial_partition": {
+                "correct_new_pixels": 29232042,
+                "correct_new_rate": 0.7599548166538846,
+                "new_predicted_other_new_pixels": 1243647,
+                "new_predicted_other_new_rate": 0.032331491856338795,
+                "new_predicted_background_rate": 0.1482809790591569,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10
+                ],
+                "new_ids": [
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 38465500,
+                "old_gt_pixels": 26875159,
+                "new_predicted_old_pixels": 2286109,
+                "new_predicted_old_rate": 0.05943271243061964,
+                "old_predicted_new_pixels": 419173,
+                "old_predicted_new_rate": 0.015597042607264203,
+                "new_predicted_background_pixels": 5703702,
+                "per_new_class": {
+                  "diningtable": {
+                    "gt_pixels": 2864750,
+                    "predicted_old_pixels": 142489,
+                    "predicted_old_rate": 0.049738720656252726,
+                    "predicted_background_pixels": 975077
+                  },
+                  "dog": {
+                    "gt_pixels": 5034389,
+                    "predicted_old_pixels": 598951,
+                    "predicted_old_rate": 0.11897193482664928,
+                    "predicted_background_pixels": 559808
+                  },
+                  "horse": {
+                    "gt_pixels": 2641937,
+                    "predicted_old_pixels": 296655,
+                    "predicted_old_rate": 0.1122869318988303,
+                    "predicted_background_pixels": 145195
+                  },
+                  "motorbike": {
+                    "gt_pixels": 2587440,
+                    "predicted_old_pixels": 100090,
+                    "predicted_old_rate": 0.03868302260149028,
+                    "predicted_background_pixels": 184575
+                  },
+                  "person": {
+                    "gt_pixels": 12999623,
+                    "predicted_old_pixels": 333909,
+                    "predicted_old_rate": 0.025686052587832738,
+                    "predicted_background_pixels": 1861509
+                  },
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 2032,
+                    "predicted_old_rate": 0.0016459278675352068,
+                    "predicted_background_pixels": 437537
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 119283,
+                    "predicted_old_rate": 0.061714968659538856,
+                    "predicted_background_pixels": 79984
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 587224,
+                    "predicted_old_rate": 0.16877963115454978,
+                    "predicted_background_pixels": 798177
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 97357,
+                    "predicted_old_rate": 0.02484227501623499,
+                    "predicted_background_pixels": 407398
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 8119,
+                    "predicted_old_rate": 0.004582464608517887,
+                    "predicted_background_pixels": 254442
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "correct": {
+        "checkpoint_sha256": "380fd15014692ad5a80737b3faa2c7328bc0a07b43634def1551f2ed43f0dbac",
+        "source": "runs/restore_proto_seed_v1/formal/correct/10-5/step2/fusion_evaluation.json",
+        "histogram_file_sha256": "a8092df51507feda76154d70d87acd5794b67c58c0b778d4a675108e3c5e77a1",
+        "protocols": {
+          "square448": {
+            "0.0": {
+              "miou": 67.96298733466,
+              "step2_partition": {
+                "correct_new_pixels": 8933996,
+                "correct_new_rate": 0.7241415729020169,
+                "new_predicted_other_new_pixels": 2091,
+                "new_predicted_other_new_rate": 0.0001694851921735937,
+                "new_predicted_background_rate": 0.18815474395213044,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15
+                ],
+                "new_ids": [
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 12337361,
+                "old_gt_pixels": 53003298,
+                "new_predicted_old_pixels": 1079941,
+                "new_predicted_old_rate": 0.08753419795367907,
+                "old_predicted_new_pixels": 674520,
+                "old_predicted_new_rate": 0.012726000559436887,
+                "new_predicted_background_pixels": 2321333,
+                "per_new_class": {
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 25708,
+                    "predicted_old_rate": 0.020823579536710185,
+                    "predicted_background_pixels": 528078
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 96197,
+                    "predicted_old_rate": 0.04977067008829137,
+                    "predicted_background_pixels": 123852
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 580495,
+                    "predicted_old_rate": 0.1668455853082646,
+                    "predicted_background_pixels": 857736
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 372552,
+                    "predicted_old_rate": 0.09506290499756953,
+                    "predicted_background_pixels": 557071
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 4989,
+                    "predicted_old_rate": 0.002815853668172895,
+                    "predicted_background_pixels": 254596
+                  }
+                }
+              },
+              "initial_partition": {
+                "correct_new_pixels": 27896574,
+                "correct_new_rate": 0.7252362246688591,
+                "new_predicted_other_new_pixels": 1300222,
+                "new_predicted_other_new_rate": 0.0338022903640925,
+                "new_predicted_background_rate": 0.1832293613757783,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10
+                ],
+                "new_ids": [
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 38465500,
+                "old_gt_pixels": 26875159,
+                "new_predicted_old_pixels": 2220695,
+                "new_predicted_old_rate": 0.0577321235912701,
+                "old_predicted_new_pixels": 367149,
+                "old_predicted_new_rate": 0.013661277315605834,
+                "new_predicted_background_pixels": 7048009,
+                "per_new_class": {
+                  "diningtable": {
+                    "gt_pixels": 2864750,
+                    "predicted_old_pixels": 147111,
+                    "predicted_old_rate": 0.051352124967274634,
+                    "predicted_background_pixels": 1328045
+                  },
+                  "dog": {
+                    "gt_pixels": 5034389,
+                    "predicted_old_pixels": 529076,
+                    "predicted_old_rate": 0.10509239552207825,
+                    "predicted_background_pixels": 508368
+                  },
+                  "horse": {
+                    "gt_pixels": 2641937,
+                    "predicted_old_pixels": 243132,
+                    "predicted_old_rate": 0.09202793253586289,
+                    "predicted_background_pixels": 208951
+                  },
+                  "motorbike": {
+                    "gt_pixels": 2587440,
+                    "predicted_old_pixels": 148222,
+                    "predicted_old_rate": 0.05728519308660297,
+                    "predicted_background_pixels": 241821
+                  },
+                  "person": {
+                    "gt_pixels": 12999623,
+                    "predicted_old_pixels": 424477,
+                    "predicted_old_rate": 0.03265302386076888,
+                    "predicted_background_pixels": 2439491
+                  },
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 10474,
+                    "predicted_old_rate": 0.008483980553427046,
+                    "predicted_background_pixels": 528078
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 92899,
+                    "predicted_old_rate": 0.0480643417209703,
+                    "predicted_background_pixels": 123852
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 564385,
+                    "predicted_old_rate": 0.16221525708956136,
+                    "predicted_background_pixels": 857736
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 56759,
+                    "predicted_old_rate": 0.01448301290761303,
+                    "predicted_background_pixels": 557071
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 4160,
+                    "predicted_old_rate": 0.0023479557545799247,
+                    "predicted_background_pixels": 254596
+                  }
+                }
+              }
+            },
+            "0.5": {
+              "miou": 68.06029300468064,
+              "step2_partition": {
+                "correct_new_pixels": 8898907,
+                "correct_new_rate": 0.7212974476470292,
+                "new_predicted_other_new_pixels": 2073,
+                "new_predicted_other_new_rate": 0.00016802620917066461,
+                "new_predicted_background_rate": 0.19310231742428546,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15
+                ],
+                "new_ids": [
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 12337361,
+                "old_gt_pixels": 53003298,
+                "new_predicted_old_pixels": 1054008,
+                "new_predicted_old_rate": 0.08543220871951465,
+                "old_predicted_new_pixels": 640868,
+                "old_predicted_new_rate": 0.012091096671003379,
+                "new_predicted_background_pixels": 2382373,
+                "per_new_class": {
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 24599,
+                    "predicted_old_rate": 0.01992528524286346,
+                    "predicted_background_pixels": 544337
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 87417,
+                    "predicted_old_rate": 0.04522804938935899,
+                    "predicted_background_pixels": 132093
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 568277,
+                    "predicted_old_rate": 0.16333389380136726,
+                    "predicted_background_pixels": 876989
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 368944,
+                    "predicted_old_rate": 0.09414226315097837,
+                    "predicted_background_pixels": 569654
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 4771,
+                    "predicted_old_rate": 0.0026928117560338512,
+                    "predicted_background_pixels": 259300
+                  }
+                }
+              },
+              "initial_partition": {
+                "correct_new_pixels": 27774786,
+                "correct_new_rate": 0.7220700627835333,
+                "new_predicted_other_new_pixels": 1236349,
+                "new_predicted_other_new_rate": 0.032141763398369966,
+                "new_predicted_background_rate": 0.19062991511874278,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10
+                ],
+                "new_ids": [
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 38465500,
+                "old_gt_pixels": 26875159,
+                "new_predicted_old_pixels": 2121690,
+                "new_predicted_old_rate": 0.055158258699353965,
+                "old_predicted_new_pixels": 363332,
+                "old_predicted_new_rate": 0.013519250248900853,
+                "new_predicted_background_pixels": 7332675,
+                "per_new_class": {
+                  "diningtable": {
+                    "gt_pixels": 2864750,
+                    "predicted_old_pixels": 137294,
+                    "predicted_old_rate": 0.04792529889170084,
+                    "predicted_background_pixels": 1387438
+                  },
+                  "dog": {
+                    "gt_pixels": 5034389,
+                    "predicted_old_pixels": 505902,
+                    "predicted_old_rate": 0.10048925500194761,
+                    "predicted_background_pixels": 543234
+                  },
+                  "horse": {
+                    "gt_pixels": 2641937,
+                    "predicted_old_pixels": 243412,
+                    "predicted_old_rate": 0.09213391538102536,
+                    "predicted_background_pixels": 239180
+                  },
+                  "motorbike": {
+                    "gt_pixels": 2587440,
+                    "predicted_old_pixels": 144522,
+                    "predicted_old_rate": 0.055855208236712736,
+                    "predicted_background_pixels": 268183
+                  },
+                  "person": {
+                    "gt_pixels": 12999623,
+                    "predicted_old_pixels": 382489,
+                    "predicted_old_rate": 0.02942308403866789,
+                    "predicted_background_pixels": 2512267
+                  },
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 10222,
+                    "predicted_old_rate": 0.008279859577728782,
+                    "predicted_background_pixels": 544337
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 84181,
+                    "predicted_old_rate": 0.04355379875362491,
+                    "predicted_background_pixels": 132093
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 551666,
+                    "predicted_old_rate": 0.15855956841087193,
+                    "predicted_background_pixels": 876989
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 58049,
+                    "predicted_old_rate": 0.014812178091122619,
+                    "predicted_background_pixels": 569654
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 3953,
+                    "predicted_old_rate": 0.0022311223792919332,
+                    "predicted_background_pixels": 259300
+                  }
+                }
+              }
+            }
+          },
+          "aspect672": {
+            "0.0": {
+              "miou": 69.02303783797201,
+              "step2_partition": {
+                "correct_new_pixels": 9081022,
+                "correct_new_rate": 0.7360587081791641,
+                "new_predicted_other_new_pixels": 2302,
+                "new_predicted_other_new_rate": 0.00018658771515237335,
+                "new_predicted_background_rate": 0.1747766803613836,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15
+                ],
+                "new_ids": [
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 12337361,
+                "old_gt_pixels": 53003298,
+                "new_predicted_old_pixels": 1097754,
+                "new_predicted_old_rate": 0.08897802374429993,
+                "old_predicted_new_pixels": 705618,
+                "old_predicted_new_rate": 0.013312718767047288,
+                "new_predicted_background_pixels": 2156283,
+                "per_new_class": {
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 25429,
+                    "predicted_old_rate": 0.02059758845647282,
+                    "predicted_background_pixels": 537874
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 96638,
+                    "predicted_old_rate": 0.049998835888773054,
+                    "predicted_background_pixels": 85605
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 594629,
+                    "predicted_old_rate": 0.17090797258592766,
+                    "predicted_background_pixels": 855739
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 373725,
+                    "predicted_old_rate": 0.09536221566443523,
+                    "predicted_background_pixels": 457718
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 7333,
+                    "predicted_old_rate": 0.004138836429888122,
+                    "predicted_background_pixels": 219347
+                  }
+                }
+              },
+              "initial_partition": {
+                "correct_new_pixels": 28664559,
+                "correct_new_rate": 0.7452017782168436,
+                "new_predicted_other_new_pixels": 1262192,
+                "new_predicted_other_new_rate": 0.03281361219794361,
+                "new_predicted_background_rate": 0.15874157361791735,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10
+                ],
+                "new_ids": [
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 38465500,
+                "old_gt_pixels": 26875159,
+                "new_predicted_old_pixels": 2432675,
+                "new_predicted_old_rate": 0.06324303596729537,
+                "old_predicted_new_pixels": 413963,
+                "old_predicted_new_rate": 0.01540318328907375,
+                "new_predicted_background_pixels": 6106074,
+                "per_new_class": {
+                  "diningtable": {
+                    "gt_pixels": 2864750,
+                    "predicted_old_pixels": 140393,
+                    "predicted_old_rate": 0.049007068679640456,
+                    "predicted_background_pixels": 1232005
+                  },
+                  "dog": {
+                    "gt_pixels": 5034389,
+                    "predicted_old_pixels": 857063,
+                    "predicted_old_rate": 0.17024171155625836,
+                    "predicted_background_pixels": 430008
+                  },
+                  "horse": {
+                    "gt_pixels": 2641937,
+                    "predicted_old_pixels": 197199,
+                    "predicted_old_rate": 0.07464182529712102,
+                    "predicted_background_pixels": 141644
+                  },
+                  "motorbike": {
+                    "gt_pixels": 2587440,
+                    "predicted_old_pixels": 111572,
+                    "predicted_old_rate": 0.043120613424852364,
+                    "predicted_background_pixels": 194117
+                  },
+                  "person": {
+                    "gt_pixels": 12999623,
+                    "predicted_old_pixels": 363456,
+                    "predicted_old_rate": 0.027958964656128873,
+                    "predicted_background_pixels": 1952017
+                  },
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 3879,
+                    "predicted_old_rate": 0.00314200501878399,
+                    "predicted_background_pixels": 537874
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 90989,
+                    "predicted_old_rate": 0.04707614063498387,
+                    "predicted_background_pixels": 85605
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 575446,
+                    "predicted_old_rate": 0.16539440422966542,
+                    "predicted_background_pixels": 855739
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 86255,
+                    "predicted_old_rate": 0.02200941310358114,
+                    "predicted_background_pixels": 457718
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 6423,
+                    "predicted_old_rate": 0.0036252211085737638,
+                    "predicted_background_pixels": 219347
+                  }
+                }
+              }
+            },
+            "0.5": {
+              "miou": 69.15309566116046,
+              "step2_partition": {
+                "correct_new_pixels": 9032721,
+                "correct_new_rate": 0.7321436894000265,
+                "new_predicted_other_new_pixels": 2069,
+                "new_predicted_other_new_rate": 0.00016770199072556926,
+                "new_predicted_background_rate": 0.1800534166099217,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15
+                ],
+                "new_ids": [
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 12337361,
+                "old_gt_pixels": 53003298,
+                "new_predicted_old_pixels": 1081187,
+                "new_predicted_old_rate": 0.08763519199932628,
+                "old_predicted_new_pixels": 658172,
+                "old_predicted_new_rate": 0.01241756692196776,
+                "new_predicted_background_pixels": 2221384,
+                "per_new_class": {
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 24375,
+                    "predicted_old_rate": 0.019743844375576115,
+                    "predicted_background_pixels": 557529
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 88783,
+                    "predicted_old_rate": 0.04593479424980792,
+                    "predicted_background_pixels": 91687
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 580906,
+                    "predicted_old_rate": 0.16696371472464494,
+                    "predicted_background_pixels": 874246
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 380293,
+                    "predicted_old_rate": 0.097038151265436,
+                    "predicted_background_pixels": 475149
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 6830,
+                    "predicted_old_rate": 0.003854936972062713,
+                    "predicted_background_pixels": 222773
+                  }
+                }
+              },
+              "initial_partition": {
+                "correct_new_pixels": 28564691,
+                "correct_new_rate": 0.7426054776358035,
+                "new_predicted_other_new_pixels": 1206349,
+                "new_predicted_other_new_rate": 0.0313618437300958,
+                "new_predicted_background_rate": 0.16510012868674526,
+                "old_foreground_ids": [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10
+                ],
+                "new_ids": [
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20
+                ],
+                "new_gt_pixels": 38465500,
+                "old_gt_pixels": 26875159,
+                "new_predicted_old_pixels": 2343801,
+                "new_predicted_old_rate": 0.060932549947355426,
+                "old_predicted_new_pixels": 410873,
+                "old_predicted_new_rate": 0.015288207225118184,
+                "new_predicted_background_pixels": 6350659,
+                "per_new_class": {
+                  "diningtable": {
+                    "gt_pixels": 2864750,
+                    "predicted_old_pixels": 130701,
+                    "predicted_old_rate": 0.04562387642900777,
+                    "predicted_background_pixels": 1277668
+                  },
+                  "dog": {
+                    "gt_pixels": 5034389,
+                    "predicted_old_pixels": 838911,
+                    "predicted_old_rate": 0.16663611016153101,
+                    "predicted_background_pixels": 468276
+                  },
+                  "horse": {
+                    "gt_pixels": 2641937,
+                    "predicted_old_pixels": 195554,
+                    "predicted_old_rate": 0.07401917608179151,
+                    "predicted_background_pixels": 163083
+                  },
+                  "motorbike": {
+                    "gt_pixels": 2587440,
+                    "predicted_old_pixels": 105648,
+                    "predicted_old_rate": 0.04083109173546053,
+                    "predicted_background_pixels": 214564
+                  },
+                  "person": {
+                    "gt_pixels": 12999623,
+                    "predicted_old_pixels": 332187,
+                    "predicted_old_rate": 0.02555358720787518,
+                    "predicted_background_pixels": 2005684
+                  },
+                  "pottedplant": {
+                    "gt_pixels": 1234562,
+                    "predicted_old_pixels": 3301,
+                    "predicted_old_rate": 0.0026738227808728926,
+                    "predicted_background_pixels": 557529
+                  },
+                  "sheep": {
+                    "gt_pixels": 1932805,
+                    "predicted_old_pixels": 84010,
+                    "predicted_old_rate": 0.043465326300376916,
+                    "predicted_background_pixels": 91687
+                  },
+                  "sofa": {
+                    "gt_pixels": 3479235,
+                    "predicted_old_pixels": 561054,
+                    "predicted_old_rate": 0.16125786271982204,
+                    "predicted_background_pixels": 874246
+                  },
+                  "train": {
+                    "gt_pixels": 3919005,
+                    "predicted_old_pixels": 86369,
+                    "predicted_old_rate": 0.022038502119798267,
+                    "predicted_background_pixels": 475149
+                  },
+                  "tvmonitor": {
+                    "gt_pixels": 1771754,
+                    "predicted_old_pixels": 6066,
+                    "predicted_old_rate": 0.0034237258671350537,
+                    "predicted_background_pixels": 222773
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "missing": [
+      "ignore",
+      "no_graph"
+    ]
+  },
+  "limitations": "One seed; adaptively inspected validation. Paired image bootstrap is not training-seed uncertainty. Alpha0.5 fixed in advance. Directional totals describe aggregate error composition, not pixel-by-pixel transition tracking."
+}
