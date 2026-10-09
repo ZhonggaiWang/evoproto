@@ -22,7 +22,6 @@ from utils.camutils import *
 from experiments.restore_proto_v1.mechanism import ratio
 from experiments.restore_proto_ald_v1.continued_graph import ContinuedConfusionProto
 from experiments.restore_proto_ald_v1 import ald as ald_v9
-import copy
 from utils.ald import fuse_ald_labels
 from utils.ald_stats import COUNT_KEYS, valid_image_mask, supervision_counts, counts_record
 from utils.evaluate import compute_confusion, update_confusion_matrix
@@ -172,7 +171,12 @@ class Trainer:
         assert parent['variant']==args.variant and parent['iteration']==8000
         del parent
         self.model.load_state_dict({k.removeprefix('module.'):v for k,v in raw['model_state'].items()},strict=True)
-        self.ald_reference=copy.deepcopy(self.model).eval().requires_grad_(False)
+        # Reconstruct explicitly: legacy weight_norm modules are not deepcopy-safe.
+        self.ald_reference=network(backbone=args.backbone,num_classes=self.total_classes+1,
+            classes_list=tasks.get_per_task_classes(args.dataset,args.task,args.step),
+            pretrained=False,init_momentum=args.momentum,aux_layer=args.aux_layer)
+        self.ald_reference.load_state_dict(self.model.state_dict(),strict=True)
+        self.ald_reference.eval().requires_grad_(False)
         self.schedule=torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer,T_max=args.max_iters)
         self.image_states=None
         if args.refine_ald:
