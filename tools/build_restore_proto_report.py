@@ -1,6 +1,8 @@
 """Build the Chinese interim methods report from verified restoration records."""
 from pathlib import Path
 import io
+import json
+from datetime import datetime, timezone, timedelta
 from html import escape
 from itertools import groupby
 from fontTools.ttLib import TTFont as FontInfo
@@ -28,7 +30,7 @@ def rich(value):
  return ''.join('<font name="'+font+'">'+escape(part)+'</font>' for font,part in runs(value))
 W,H=595.28,841.89
 c=canvas.Canvas(str(OUT),pagesize=(W,H))
-c.setTitle('EvoProto 恢复版：实验方法与阶段记录')
+c.setTitle('EvoProto 与 OLC：实验方法和验证记录')
 c.setAuthor('EvoProto experiment record')
 original_draw=c.drawString
 def mixed_draw(x,y,value):
@@ -49,11 +51,11 @@ def page(n,title,kicker):
  global y
  if n>1:c.showPage()
  c.setFillColor(HexColor('#123349'));c.rect(0,H-10,W,10,fill=1,stroke=0)
- c.setFont('CN',9);c.drawString(42,H-35,'EvoProto / 恢复版实验方法');c.drawRightString(W-42,H-35,'2026-10-09 · 中期记录')
+ c.setFont('CN',9);c.drawString(42,H-35,'EvoProto / 恢复版实验方法');c.drawRightString(W-42,H-35,datetime.now(timezone(timedelta(hours=8))).strftime('%Y-%m-%d')+' · 实验记录')
  c.setFillColor(HexColor('#157f83'));c.setFont('CN',10);c.drawString(42,H-68,kicker)
  c.setFillColor(HexColor('#123349'));c.setFont('CN',22);c.drawString(42,H-99,title)
  c.setStrokeColor(HexColor('#d6e2e7'));c.line(42,48,W-42,48)
- c.setFont('CN',8);c.setFillColor(HexColor('#637482'));c.drawString(42,32,'中期记录：完整模型已评估，消融与候选细化仍在进行。');c.drawRightString(W-42,32,str(n))
+ c.setFont('CN',8);c.setFillColor(HexColor('#637482'));c.drawString(42,32,'结果以已完成记录为准；OLC 与旧 ALD 分别标识。');c.drawRightString(W-42,32,str(n))
  y=H-127
 
 def text(s,compact=False):
@@ -80,10 +82,10 @@ text('每个类别有一个可学习的 512 维 prototype。图像特征与原�
 text('混淆性建模只使用训练图像的弱标签、CAM、PAR 伪标签和上一阶段教师。得到的混淆关系实际进入 KD 权重和 SEP 对手选择；所有混淆统计停止梯度，不读取增量训练的像素真值。')
 head('当前证据')
 text('共享初始阶段：主头 83.5556，原型分支 83.3298 mIoU。恢复版第一增量阶段已完成 8,000 步：主头 74.6066，原型分支 73.8913 mIoU。后者在 1,240 张验证图像、15 个前景类加背景上计算，输入为 448 × 448。')
-text('完整模型的两阶段增量训练均已完成。最终 21 类主头 mIoU 为 68.7125（square448）和 69.8902（aspect672）；等比例融合为 68.8482 和 70.0644。两组消融的完整链路仍待完成，尚不能归因模块收益。')
+text('完整模型的两阶段增量训练均已完成。最终 21 类主头 mIoU 为 68.7125（square448）和 69.8902（aspect672）；等比例融合为 68.8482 和 70.0644。两组核心消融链路均已完成；在线 OLC 的同预算增量链另行验证。')
 head('本文如何使用')
-text('第 2 页解释符号与原型；第 3 页说明混淆关系；第 4-5 页给出 KD、SEP 与完整损失；第 6 页规定数据和评估协议；第 7 页记录复现、权重保留和论文修改边界；第 8 页给出已核验的最终阶段结果。')
-text('本报告描述本轮实际代码，而非逐式复现原稿。ALD 在当前三组实验中关闭；历史 V9 的最终阶段细化结果不直接作为本轮完整增量链的证据。',True)
+text('第 2 页解释符号与原型；第 3 页说明混淆关系；第 4-5 页给出 KD、SEP 与完整损失；第 6 页规定数据和评估协议；第 7 页记录复现、权重保留和论文修改边界；第 8-9 页给出完整模型与核心消融；第 10-12 页说明 OLC、标签诊断及同预算对比。')
+text('本报告描述本轮实际代码，而非逐式复现原稿。核心三组实验均关闭 ALD。额外续训的旧 ALD 已被排除；新 OLC 专指原 8,000 步内的旧类图像标签校正。',True)
 
 page(2,'符号、类别原型与预测','02 / 从一个像素开始')
 text('像素位置用 x 表示，类别用 a、b、c 表示。背景编号为 0；O 是本阶段已知的旧前景类别集合，N 是本阶段新增前景类别集合。旧类别数记为 |O|，这里不包含背景。')
@@ -95,7 +97,7 @@ head('原型如何获取')
 text('本轮没有引入额外聚类或验证集初始化。初始阶段已经学习的旧原型随权重继承；新增类别原型使用固定随机种子初始化，再随弱监督训练优化。teacher 原型固定，student 原型可更新。')
 head('训练标签如何使用')
 text('增量阶段只保留本阶段新增类别的图像级真值标签；旧类别图像标签由 teacher 预测替代。主、辅助 CAM 结合这些允许类别生成伪标签，并经 PAR 精炼。原型像素 BCE 与主头像素 BCE 使用伪标签。')
-text('共享 step0 的历史训练使用像素标注，因此不能把整个系统描述成从零开始完全不使用像素真值。验证阶段使用像素真值计算指标，但预测本身不使用验证图像级真值标签。')
+text('共享 step0 的历史训练使用像素标注，因此不能把整个系统描述成从零开始完全不使用像素真值。分割验证仅用像素真值计分，预测不使用验证图像真值标签。另列的 CAM 定位诊断使用验证图像级标签过滤类别，不能与无标签分割混称。')
 
 page(3,'混淆关系如何变成可用的图','03 / 核心创新的实际入口')
 text('先筛选可信锚点：主、辅助 CAM 的最大类别一致，归一化响应都不低于 0.7，类别在图像允许标签中，且 PAR 标签相同。旧类锚点还要求上一阶段 teacher 的密集预测一致；padding 区域排除。')
@@ -145,7 +147,7 @@ head('VOC 10-5 设置')
 text('共享 step0 学习前 10 个前景类和背景；step1、step2 各新增 5 类。初始权重来自既有固定基线的 20,000 步最终模型，三组实验使用完全相同的起点。每组 step2 必须继承自己的 step1。')
 text('本机数据：/data/zhonggai/coco/PascalVOC12。训练图片数依次为 6,139／5,542／2,145；对应验证图片数为 869／1,240／1,449。已经核查 split 内无重复、各训练集合与最终验证集无交集。')
 head('固定训练配置')
-text('ViT-B + 512 维 decoder；每个增量阶段 8,000 次更新；物理 GPU 5、6；每卡 batch 4，总 batch 8。基础学习率为 0.00002，头部倍率 10；使用原工程 PolyWarmupAdamW。训练裁剪 448×448，尺度范围 0.5 至 2.0，随机种子 0。ALD 当前关闭。')
+text('ViT-B + 512 维 decoder；每个增量阶段 8,000 次更新；物理 GPU 5、6；每卡 batch 4，总 batch 8。基础学习率为 0.00002，头部倍率 10；使用原工程 PolyWarmupAdamW。训练裁剪 448×448，尺度范围 0.5 至 2.0，随机种子 0。旧 ALD 关闭；OLC 作为同预算附加模块单独比较。')
 head('两种推理协议分别报告')
 text('square448：把输入缩放为 448×448。aspect672：保持长宽比，目标面积约为 672×672，每条边取最接近的 16 倍数。后者不是“最长边为 672”，也不是本轮把训练裁剪改成 672。')
 text('最终在 1,449 张验证图像上计算 21 类 mIoU，同时报告旧前景、新前景和逐类 IoU。主头与原型分支分开报告。分辨率带来的收益不得算成混淆模块或原型的收益。')
@@ -163,8 +165,8 @@ head('论文哪些要保留，哪些要改')
 text('保留问题设置、teacher/student、显式可学习原型，以及“混淆指导分离与保持”的主线。当前实现改变了混淆估计、对手选择、SEP 和 KD 的具体公式，需要修订原式 (2)-(7)、总损失式 (11) 及相关结构图箭头。')
 text('特别是原稿对高混淆类别减弱全局原型 MSE；本轮则仅在可信旧类区域加强条件 KD，并在新类区域关闭或衰减 KD。权重方向与约束范围都不同，不能说原公式原样保留。')
 head('尚未完成与结论边界')
-text('当前尚待两条消融链路与 ALD 等预算对照。ALD 细化方案已准备并排队，但尚无本轮 GPU 结果，不能写成已采用方法。单 seed 和验证集选型不能支持泛化统计显著性声明。机制与梯度测试不能代替最终性能消融。')
-text('研究目标仍是保留核心机制并争取同协议接近 71 mIoU。当前完整模型 aspect672 融合为 70.0644，距离 71 为 0.9356 个百分点；混淆和原型的贡献须由完整消融确认。不得把第一阶段的 74.61 当成最终达标。')
+text('核心消融均已完成。混淆消融同时改变 SEP 对手与 KD 权重，没有隔离 KD 权重方向。单 seed、反复查看的验证集及融合选型，不能支持独立测试或跨种子显著性声明。旧 ALD 续训结果不纳入当前方法。')
+text('研究目标仍是保留核心机制并争取同协议接近 71 mIoU。当前完整模型 aspect672 融合为 70.0644，距离 71 为 0.9356 个百分点；主头的混淆收益约 0.82 点；原型增量监督收益约 0.11 点，后者较小，需要谨慎解释。不得把第一阶段的 74.61 当成最终达标。')
 text('来源：本项目实际训练配置与日志、机制源码、checkpoint_audit.json、数据协议核查，以及原稿第 3-5 页。历史结果只作背景参照；本报告未加入未运行的实验成绩。',True)
 page(8,'完整模型：已核验的最终阶段结果','08 / 成绩与归因分开报告')
 import json
@@ -190,10 +192,98 @@ _,height=table.wrap(W-84,H)
 table.drawOn(c,42,y-height);y-=height+15
 head('这些结果能说明什么')
 text('保持长宽比和提高推理面积使主头提升 1.1777 个百分点；同一 aspect672 输入下，等比例融合再提升 0.1742 个百分点。这是推理设置的变化，不能代替混淆建模或原型训练收益的消融证据。')
-text('原型分支自身可产生接近主头的密集预测，说明它是实际参与预测和优化的分支。是否值得保留、是否提高共享特征质量，仍以完整 without_proto 对照为准。')
-head('评估校验与尚待结果')
+text('原型分支自身可产生接近主头的密集预测，说明它是实际参与预测和优化的分支。完整 without_proto 对照已完成：aspect672 主头差约 0.1080 点，不宜描述为显著或大幅提升。')
+head('评估校验与结果范围')
 text('已修正独立评估中 uint8 标签乘类别数导致的直方图溢出；改为先转 int64。训练期验证原本使用 long，不受此问题影响。修正后的独立评估与训练验证一致，融合两端也与各单独分支一致。',True)
-text('without_confusion、without_proto 的最终结果，以及 ALD 与等预算普通续训的比较仍待完成。本页仅为完整模型的已验证记录，不把尚未运行或尚未结束的结果填入表格。',True)
+text('核心消融见下一页。旧 ALD 曾追加 1,200 步，用户已否定这一额外训练方案，因此不与本页 8,000 步主线混排。OLC 的全部新增机制在原训练预算内生效。',True)
+
+def result_table(rows,widths):
+ global y
+ rows=[[Paragraph(rich(str(cell)),small) for cell in row] for row in rows]
+ table=Table(rows,colWidths=widths)
+ table.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),HexColor('#e2f0f0')),('ROWBACKGROUNDS',(0,1),(-1,-1),[HexColor('#f5f8fa'),HexColor('#ffffff')]),('VALIGN',(0,0),(-1,-1),'MIDDLE'),('TOPPADDING',(0,0),(-1,-1),7),('BOTTOMPADDING',(0,0),(-1,-1),7)]))
+ _,height=table.wrap(W-84,H)
+ if y-height<65:raise RuntimeError('Result table overflow')
+ table.drawOn(c,42,y-height);y-=height+15
+
+page(9,'核心消融：混淆与原型各贡献多少','09 / 相同预算，完整增量链')
+text('以下三组均从同一 step0 出发，各训练两个 8,000 步增量阶段；step2 继承本组 step1。主要对比统一采用主头，避免把未训练的增量原型混入 without_proto 结果。')
+rows=[['方法','square448 主头','aspect672 主头','aspect672 融合']]
+for variant,label in [('full','完整主线'),('without_confusion','关闭混淆'),('without_proto','关闭增量原型监督')]:
+ d=ROOT/'runs/restore_proto_v1/formal'/variant/'10-5/step2'
+ e=json.loads((d/'evaluation.json').read_text());f=json.loads((d/'fusion_evaluation.json').read_text())
+ rows.append([label,format(e['results']['square448']['main']['miou'],'.4f'),format(e['results']['aspect672']['main']['miou'],'.4f'),'-' if variant=='without_proto' else format(f['results']['aspect672']['0.5']['miou'],'.4f')])
+result_table(rows,[170,111,115,115])
+head('混淆建模')
+text('主头收益为 square448 的 0.7120 点和 aspect672 的 0.8221 点；固定 0.5 融合的 aspect672 收益为 0.7713 点。该对照支持整个混淆模块在本轮设置中的作用，但同时改变 KD 加权和 SEP 对手，不能分别归因。')
+text('高混淆类别上调 KD 的前提是教师可靠：本实现先排除新类、低旧类 CAM 和低教师置信度区域。但这一权重方向仍是研究假设；若要单独证明，需要保留 SEP 不变，仅比较 KD 的上调、恒定或下调。')
+head('原型监督')
+text('第一增量阶段，完整主头较关闭增量原型监督高 1.0189 点；最终阶段差距缩小为 square448 的 0.2413 点、aspect672 的 0.1080 点。原型确实参与优化和预测，但最终主头收益很小，不能夸大。')
+text('按验证图像配对 bootstrap，最终 aspect672 主头的混淆差值区间约为 [0.0524, 1.6201]，原型差值区间为 [-0.7971, 1.0918]。这些区间只反映验证图像抽样，不反映训练种子波动；验证集已被多次查看。',True)
+
+page(10,'OLC：训练过程中校正旧类标签','10 / Old-class Label Correction')
+text('OLC 专门处理“这张图里是否存在某个旧类”的错误判断。它从第一步开始工作，沿用冻结的上一阶段 teacher，复用主、辅助图像分类头，不添加额外模型，也不追加训练。')
+text('i 表示训练图像，c 表示旧前景类别，v 表示这张图被再次采样的次数。g 是图像分类 logit；h 为主图像分类头 main 或辅助头 aux。r 是 sigmoid 概率，横线表示该图像的概率记忆。这里的 g 不同于前文像素 logit z。')
+eq(r'r^{h,(v)}_{ic}=\operatorname{sigmoid}(g^h_c(x_i^{(v)})),\quad h\in\{\mathrm{main},\mathrm{aux}\}')
+eq(r'\bar r^{h,(v)}_{ic}=0.5\bar r^{h,(v-1)}_{ic}+0.5r^{h,(v)}_{ic}')
+text('首次访问直接用当前概率初始化。以后每次随机缩放、翻转和裁剪产生新的预测并更新记忆；teacher 权重不变。两卡共享相同记忆，同一全局 batch 中重复图像先取平均，再更新一次。')
+head('正、负、未知三种状态')
+eq(r'\pi^+_{ic}=\mathbf{1}[\bar r^{\mathrm{main}}_{ic}>0.5]\,\mathbf{1}[\bar r^{\mathrm{aux}}_{ic}>0.5]')
+eq(r'\pi^-_{ic}=\mathbf{1}[\bar r^{\mathrm{main}}_{ic}\leq0.5]\,\mathbf{1}[\bar r^{\mathrm{aux}}_{ic}\leq0.5]')
+text('正类指示量为 1 表示旧类存在，负类指示量为 1 表示不存在；两者都为 0 时为未知。不能把未知当成负类。0.5 的记忆系数是本轮预先固定的简单候选，尚未证明最优。')
+head('怎样进入训练')
+text('主、辅助分类 BCE 对未知旧类置零，保留原始 batch × 类别数分母，新类图像真值照常使用。未知类保留 CAM 竞争资格，但其旧类获胜标签不作硬监督。teacher 给出的旧类像素标签仅在该图像的旧类被接纳为正类时保留，否则置为 ignore，而非背景；有效新类伪标签优先。')
+text('混淆图、原型、KD 和 SEP 的公式不改，只将其原有允许类别输入换为校正后的可信正类。OLC 会通过标签质量影响这些模块，因此并非统计上完全独立。',True)
+
+page(11,'标签准确性：看精确率，也看遗漏','11 / 独立诊断，禁止用旧类真值训练')
+text('静态诊断使用本阶段训练图像的完整图像缩放输入。预测完成后，才在独立程序中拼接旧类图像真值计分；这些真值不进入 OLC 记忆或训练。此诊断用于判断设计是否有希望，不能直接证明随机裁剪下的在线 EMA 有效。')
+rows=[['阶段 / 标签规则','精确率','召回率','覆盖率']]
+for stage in (1,2):
+ d=json.loads((ROOT/f'runs/online_ald_label_audit_v1/step{stage}.json').read_text())
+ for key,label in [('main_threshold_0.5','原主头'),('dual_head_consensus','双头一致')]:
+  r=d['policies'][key];rows.append([f'Step {stage} / {label}']+[format(100*r[k],'.2f') for k in ['precision','recall','coverage']])
+result_table(rows,[208,101,101,101])
+text('精确率：接纳的旧类正标签中有多少为真；召回率：真实存在的旧类有多少被接纳，未知中的真实正类也计为遗漏；覆盖率：所有图像-旧类组合中，有多少作出了正或负判断。只看被接纳标签的准确率，会掩盖大量弃用标签的问题。')
+head('训练内在线记忆诊断')
+rows=[['阶段 / 已完成更新','精确率','召回率','覆盖率']]
+for stage in (1,2):
+ directory=ROOT/f'runs/restore_proto_olc_v1/formal/olc/10-5/step{stage}'
+ files=list(directory.glob('olc_label_audit_*.json'))
+ if files:
+  d=max((json.loads(p.read_text()) for p in files),key=lambda r:r['iteration']);r=d['policies']['olc_memory']
+  rows.append([f'Step {stage} / {d["iteration"]}']+[format(100*r[k],'.2f') for k in ['precision','recall','coverage']])
+ else:rows.append([f'Step {stage} / 待诊断','-','-','-'])
+result_table(rows,[208,101,101,101])
+text('在线结果来自当前训练记忆，随机裁剪可能不包含整图中的某个类别，所以图像真值只能诊断整图存在性。另同时报告“同一 EMA 仅主头”的对照，帮助区分双头一致筛选与记忆的影响；它仍不等价于一次独立的无 EMA 训练消融。',True)
+
+page(12,'OLC 是否改善最终分割','12 / 同预算验证与采用条件')
+comparison=ROOT/'runs/restore_proto_olc_v1/comparison.json'
+data=json.loads(comparison.read_text()) if comparison.exists() else {'status':'waiting'}
+if data.get('status')=='complete':
+ text('两条完整增量链的预算、主要配置、前驱关系、最终权重哈希、验证图像和融合端点均已核对。下表比较 CPU 同协议结果，单位为 mIoU 百分数；变化列为 OLC 减无 OLC。')
+ rows=[['输入 / 预测方式','无 OLC','加 OLC','变化']]
+ for mode in ['square448','aspect672']:
+  for head_key,label in [('main','主头'),('fixed_half_prototype_fusion','0.5 融合')]:
+   r=data['comparisons'][mode][head_key]
+   rows.append([mode+' / '+label,format(r['baseline_miou'],'.4f'),format(r['olc_miou'],'.4f'),format(r['candidate_minus_reference_pp'],'+.4f')])
+ result_table(rows,[208,101,101,101])
+ r=data['comparisons']['aspect672']['main']
+ text('aspect672 主头：旧前景变化 '+format(r['old_delta_pp'],'+.4f')+' 点，新前景变化 '+format(r['new_delta_pp'],'+.4f')+' 点。配对图像 bootstrap 区间为 ['+', '.join(format(v,'.4f') for v in r['paired_image_bootstrap_95_percentile_interval'])+']。这不是跨训练种子的显著性证明。')
+else:
+ text('OLC 完整增量链或最终验证尚未全部完成，因此暂不能判断是否改善最终分割。下面只列已经写入验证日志的最新阶段记录，不将中途数字当成最终效果。')
+ rows=[['阶段 / 更新','主头','原型','CAM / 辅助 CAM']]
+ for stage in [1,2]:
+  p=ROOT/f'runs/restore_proto_olc_v1/formal/olc/10-5/step{stage}/metrics.jsonl'
+  if p.exists():
+   r=json.loads(p.read_text().splitlines()[-1]);rows.append([f'Step {stage} / {r["iteration"]}',format(r['all_miou'],'.3f'),format(r['prototype_miou'],'.3f'),format(r['cam_miou'],'.3f')+' / '+format(r['auxiliary_cam_miou'],'.3f')])
+  else:rows.append([f'Step {stage} / 待验证','-','-','-'])
+ result_table(rows,[170,93,93,155])
+head('判断标准与实验边界')
+text('先检查旧类标签精确率是否提升，并同时检查召回率、覆盖率和错判为负类的数量。再看相同输入协议下的最终分割及旧／新类别表现。若标签更准却分割更差，必须检查筛选是否过强或旧类召回受损，不能只展示标签指标。')
+text('无 OLC 的完整主线 aspect672 主头为 69.8902，固定半原型融合为 70.0644。OLC 不重新搜索融合比例，不追加 1,200 步，不引入同阶段参考模型。只在这些条件一致时讨论新增收益。')
+head('复现检查与命名')
+text('实现：experiments/restore_proto_olc_v1。双卡记忆同步、重复图像合并、未知标签零分类梯度及两阶段 GPU 冒烟通过。关闭 OLC 的冒烟差约 0.00214 mIoU 点；不修改代码的原入口重复运行差约 0.00172 点，因此没有逐位确定性承诺。',True)
+text('旧 ALD 的额外续训方案仅作历史记录。新 OLC 只指本报告定义的在线旧类标签校正；两者不能混用名字、训练预算或实验成绩。最终方法的共享初始权重、必要前驱和最终权重均受保护。',True)
 
 c.save()
 print(OUT)
