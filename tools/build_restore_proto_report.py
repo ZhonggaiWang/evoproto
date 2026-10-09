@@ -53,7 +53,7 @@ def page(n,title,kicker):
  c.setFillColor(HexColor('#157f83'));c.setFont('CN',10);c.drawString(42,H-68,kicker)
  c.setFillColor(HexColor('#123349'));c.setFont('CN',22);c.drawString(42,H-99,title)
  c.setStrokeColor(HexColor('#d6e2e7'));c.line(42,48,W-42,48)
- c.setFont('CN',8);c.setFillColor(HexColor('#637482'));c.drawString(42,32,'训练进行中；阶段成绩不等于最终 20 类成绩。');c.drawRightString(W-42,32,str(n))
+ c.setFont('CN',8);c.setFillColor(HexColor('#637482'));c.drawString(42,32,'中期记录：完整模型已评估，消融与候选细化仍在进行。');c.drawRightString(W-42,32,str(n))
  y=H-127
 
 def text(s,compact=False):
@@ -76,13 +76,13 @@ def eq(s):
 page(1,'要恢复什么，当前做到哪里','01 / 阅读导引')
 text('本轮目标是在保留原论文主线的前提下恢复 EvoProto：先估计哪些类别容易混淆，再通过显式类别原型指导知识保持和类别分离。最终效果由完整增量链路及消融验证，不能只靠保留模块名称来判断。')
 head('核心机制')
-text('每个类别有一个可学习的 512 维 prototype。图像特征与原型的余弦相似度形成原型预测。主分割头与原型分支共享 decoder 特征，因此原型监督可以影响实际分割特征。默认结果仍使用主分割头，另行报告原型分支成绩。')
+text('每个类别有一个可学习的 512 维 prototype。图像特征与原型的余弦相似度形成原型预测。主分割头与原型分支共享 decoder 特征，因此原型监督可以影响实际分割特征。主头是消融的共同主指标；另行报告原型分支及固定比例融合。')
 text('混淆性建模只使用训练图像的弱标签、CAM、PAR 伪标签和上一阶段教师。得到的混淆关系实际进入 KD 权重和 SEP 对手选择；所有混淆统计停止梯度，不读取增量训练的像素真值。')
 head('当前证据')
 text('共享初始阶段：主头 83.5556，原型分支 83.3298 mIoU。恢复版第一增量阶段已完成 8,000 步：主头 74.6066，原型分支 73.8913 mIoU。后者在 1,240 张验证图像、15 个前景类加背景上计算，输入为 448 × 448。')
-text('第一阶段最终权重已通过完整模型加载、参数有限值、原型形状与来源哈希核查。第二阶段已继承这份权重开始训练。最终 20 个前景类加背景的成绩，以及两组消融的最终成绩，尚未产生。')
+text('完整模型的两阶段增量训练均已完成。最终 21 类主头 mIoU 为 68.7125（square448）和 69.8902（aspect672）；等比例融合为 68.8482 和 70.0644。两组消融的完整链路仍待完成，尚不能归因模块收益。')
 head('本文如何使用')
-text('第 2 页解释符号与原型；第 3 页说明混淆关系；第 4-5 页给出 KD、SEP 与完整损失；第 6 页规定数据和评估协议；第 7 页记录复现、权重保留和论文修改边界。')
+text('第 2 页解释符号与原型；第 3 页说明混淆关系；第 4-5 页给出 KD、SEP 与完整损失；第 6 页规定数据和评估协议；第 7 页记录复现、权重保留和论文修改边界；第 8 页给出已核验的最终阶段结果。')
 text('本报告描述本轮实际代码，而非逐式复现原稿。ALD 在当前三组实验中关闭；历史 V9 的最终阶段细化结果不直接作为本轮完整增量链的证据。',True)
 
 page(2,'符号、类别原型与预测','02 / 从一个像素开始')
@@ -149,22 +149,51 @@ text('ViT-B + 512 维 decoder；每个增量阶段 8,000 次更新；物理 GPU 
 head('两种推理协议分别报告')
 text('square448：把输入缩放为 448×448。aspect672：保持长宽比，目标面积约为 672×672，每条边取最接近的 16 倍数。后者不是“最长边为 672”，也不是本轮把训练裁剪改成 672。')
 text('最终在 1,449 张验证图像上计算 21 类 mIoU，同时报告旧前景、新前景和逐类 IoU。主头与原型分支分开报告。分辨率带来的收益不得算成混淆模块或原型的收益。')
-head('推理融合仅作为额外诊断')
+head('融合选择与公平消融')
 text('另预设主头／原型 sigmoid 概率融合网格：原型占比为 0、0.25、0.5、0.75、1，原型 cosine 先除以训练温度 0.1。已用共享初始权重核查 CPU／GPU 端点差异小于 0.001 个百分点。')
-text('初始阶段融合的最大变化仅约 +0.005 个百分点，不能据此预言最终收益。若最终选择融合比例，须披露验证集选择，并对比较组应用一致设置，同时保留原始主头成绩。')
+text('完整模型验证网格选择了原型占比 0.5；这属于验证集选型。所有组的主要消融仍比较主头。0.5 融合只用于保留原型监督的组；without_proto 的增量原型未受训练，因此仅使用主头，避免人为拉低对照。')
 
 page(7,'复现、保留权重与论文修改','07 / 结论必须有对应证据')
 head('目前可复核的工件')
 text('代码分支：codex/restore-proto-4090。训练实现位于 experiments/restore_proto_v1；运行记录位于 runs/restore_proto_v1/formal。manifest 保存代码哈希、种子、预算和初始权重来源；每阶段保存配置、命令、前驱哈希、指标、混淆统计和最终权重回执。')
-text('第一阶段原型参数为 [11,512] 和 [5,512] 两块，完整模型严格加载通过，参数均为有限值。第二阶段配置中的前驱路径与 SHA256 和已核查的第一阶段权重一致。')
+text('完整模型最终原型参数为 [11,512]、[5,512]、[5,512] 三块。两阶段完整模型严格加载、有限值和前驱 SHA256 核查均通过。单独评估已与训练时验证对齐，主头 mIoU 差异小于 0.001 个百分点。')
 head('权重策略')
 text('不保存每轮／每次验证的快照，只保存阶段最终权重。最终采用方法的共享 step0、step1 前驱和 step2 最终模型一起保护。低性能候选只在评估完成、确认无后续依赖后再清理；日志、指标和核查记录保留。')
 head('论文哪些要保留，哪些要改')
 text('保留问题设置、teacher/student、显式可学习原型，以及“混淆指导分离与保持”的主线。当前实现改变了混淆估计、对手选择、SEP 和 KD 的具体公式，需要修订原式 (2)-(7)、总损失式 (11) 及相关结构图箭头。')
 text('特别是原稿对高混淆类别减弱全局原型 MSE；本轮则仅在可信旧类区域加强条件 KD，并在新类区域关闭或衰减 KD。权重方向与约束范围都不同，不能说原公式原样保留。')
 head('尚未完成与结论边界')
-text('当前尚待完整第二阶段、两条消融链路、最终推理协议对照与最终候选选择。单 seed 和验证集选型不能支持统计显著性声明。已有单元测试与分布式梯度核查证明实现路径有效，但不能代替最终性能消融。')
-text('研究目标仍是保留核心机制并争取同协议接近 71 mIoU。是否达到、混淆和原型分别贡献多少，将以完整结果为准。现阶段不得把 74.61 的第一阶段成绩当成最终达标。')
+text('当前尚待两条消融链路与 ALD 等预算对照。ALD 细化方案已准备并排队，但尚无本轮 GPU 结果，不能写成已采用方法。单 seed 和验证集选型不能支持泛化统计显著性声明。机制与梯度测试不能代替最终性能消融。')
+text('研究目标仍是保留核心机制并争取同协议接近 71 mIoU。当前完整模型 aspect672 融合为 70.0644，距离 71 为 0.9356 个百分点；混淆和原型的贡献须由完整消融确认。不得把第一阶段的 74.61 当成最终达标。')
 text('来源：本项目实际训练配置与日志、机制源码、checkpoint_audit.json、数据协议核查，以及原稿第 3-5 页。历史结果只作背景参照；本报告未加入未运行的实验成绩。',True)
+page(8,'完整模型：已核验的最终阶段结果','08 / 成绩与归因分开报告')
+import json
+base=ROOT/'runs/restore_proto_v1/formal/full/10-5/step2'
+evaluation=json.loads((base/'evaluation.json').read_text())
+fusion=json.loads((base/'fusion_evaluation.json').read_text())
+verification=json.loads((base/'fusion_verification.json').read_text())
+assert evaluation['histogram_label_dtype']=='int64'
+assert evaluation['images']==fusion['images']==verification['images']==1449
+assert fusion['checkpoint_sha256']==verification['checkpoint_sha256']
+assert verification['per_image_histograms_verified']
+text('以下均为同一份 full 第二阶段 8,000 步最终权重，在 VOC 验证集 1,449 张图像上计算。全部类别指标含背景，共 21 类；旧前景为 15 类，当前新增前景为 5 类。数值单位为百分数。')
+from reportlab.platypus import Table, TableStyle
+rows=[['输入 / 预测方式','全部类别','旧前景','新增前景']]
+for mode in ('square448','aspect672'):
+ for key,label in [('main','主头'),('prototype','原型'),('fusion','0.5 融合')]:
+  record=fusion['results'][mode]['0.5'] if key=='fusion' else evaluation['results'][mode][key]
+  rows.append([mode+' / '+label]+[format(record[k],'.4f') for k in ('miou','previous_foreground','current_foreground')])
+rows=[[Paragraph(rich(cell),small) for cell in row] for row in rows]
+table=Table(rows,colWidths=[211,86,86,128-0.72])
+table.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),HexColor('#e2f0f0')),('ROWBACKGROUNDS',(0,1),(-1,-1),[HexColor('#f5f8fa'),HexColor('#ffffff')]),('VALIGN',(0,0),(-1,-1),'MIDDLE'),('TOPPADDING',(0,0),(-1,-1),9),('BOTTOMPADDING',(0,0),(-1,-1),9),('LINEBELOW',(0,0),(-1,0),.6,HexColor('#b4cbcf'))]))
+_,height=table.wrap(W-84,H)
+table.drawOn(c,42,y-height);y-=height+15
+head('这些结果能说明什么')
+text('保持长宽比和提高推理面积使主头提升 1.1777 个百分点；同一 aspect672 输入下，等比例融合再提升 0.1742 个百分点。这是推理设置的变化，不能代替混淆建模或原型训练收益的消融证据。')
+text('原型分支自身可产生接近主头的密集预测，说明它是实际参与预测和优化的分支。是否值得保留、是否提高共享特征质量，仍以完整 without_proto 对照为准。')
+head('评估校验与尚待结果')
+text('已修正独立评估中 uint8 标签乘类别数导致的直方图溢出；改为先转 int64。训练期验证原本使用 long，不受此问题影响。修正后的独立评估与训练验证一致，融合两端也与各单独分支一致。',True)
+text('without_confusion、without_proto 的最终结果，以及 ALD 与等预算普通续训的比较仍待完成。本页仅为完整模型的已验证记录，不把尚未运行或尚未结束的结果填入表格。',True)
+
 c.save()
 print(OUT)
