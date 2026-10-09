@@ -31,9 +31,12 @@ def main():
         for stage in [1,2]:
             d=formal/variant/'10-5'/f'step{stage}';metric=last(d/'metrics.jsonl');relation=last(d/'relation_metrics.jsonl');receipt=read(d/'final_receipt.json');evaluation=read(d/'evaluation.json')
             evaluation_valid=bool(evaluation and evaluation.get('histogram_label_dtype')=='int64' and metric and abs(evaluation['results']['square448']['main']['miou']-metric['all_miou'])<.2)
-            final=d/'checkpoints/model_final.pth';done=bool(final.exists() and receipt and metric and metric['iteration']==manifest['iterations'] and (stage!=2 or evaluation_valid))
+            final=d/'checkpoints/model_final.pth';retention=read(d/'weight_retention.json')
+            archived=bool(retention and receipt and retention.get('status')=='deleted_after_verified_evaluation' and retention.get('sha256')==receipt['sha256'] and retention.get('path')==str(final.resolve()))
+            done=bool((final.exists() or archived) and receipt and metric and metric['iteration']==manifest['iterations'] and (stage!=2 or evaluation_valid))
             row={'variant':variant,'stage':stage,'complete':done,'final_checkpoint_exists':final.exists(),'last_validation':metric,'latest_relations':relation,'prototype_relations_in_optimized_loss':bool(relation and relation['iteration']>2000 and variant!='without_proto')}
             row['effective_restoration']={'explicit_prototype_parameters':True,'incremental_prototype_losses':variant!='without_proto','confusion': 'uniform_foreground_control' if variant=='without_confusion' else 'observed_directed_confusion_top2','post_warmup_weights':{'main_BCE':.1,'prototype_BCE':0. if variant=='without_proto' else .1,'main_KD':.1,'prototype_KD':0. if variant=='without_proto' else .05,'main_SEP':.02,'prototype_SEP':0. if variant=='without_proto' else .05,'old_prototype_direction':0. if variant=='without_proto' else .01},'ALD':False}
+            row['weight_retention']=retention
             row['standalone_evaluation_verified_against_trainer']=evaluation_valid
             if evaluation_valid:row['final_protocol_miou']={m:{head:v['miou'] for head,v in branch.items()} for m,branch in evaluation['results'].items()}
             graph=read(d/'confusion.json')
