@@ -1,0 +1,24 @@
+{
+  "python": "3.9",
+  "packages": {
+    "torch": "2.3.1+cu118",
+    "torchvision": "0.18.1+cu118",
+    "timm": "1.0.7",
+    "numpy": "1.26.4",
+    "opencv-python": "4.11.0.86",
+    "mmcv-lite": "2.2.0",
+    "mmengine": "0.10.7",
+    "omegaconf": "2.3.1",
+    "tensorboard": "2.21.0",
+    "Pillow": "10.2.0",
+    "imageio": "2.34.2",
+    "scipy": "1.13.1",
+    "scikit-learn": "1.5.0",
+    "matplotlib": "3.9.0",
+    "texttable": "1.7.0"
+  },
+  "environment": ".runtime/restore_proto/venv",
+  "shared_base_environment": "/home/zhonggai/miniconda3/envs/dl",
+  "initialization": "Incremental stages load complete predecessor; --no-pretrained bypasses incompatible timm pretrained downloader API",
+  "reservation_v2_sha256": "6118f168df3b82ea743ea82998297d0e4fd3524fd0be212aa2695e231e03da8f"
+}
