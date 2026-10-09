@@ -1,4 +1,4 @@
-"""Build the Chinese interim methods report from verified restoration records."""
+"""Build the Chinese methods report from verified restoration and OLC records."""
 from pathlib import Path
 import io
 import json
@@ -75,6 +75,9 @@ def eq(s):
  if y-height<65:raise RuntimeError('Formula overflow')
  c.drawImage(image,54,y-height,width=width,height=height,mask='auto');y-=height+15
 
+comparison_path=ROOT/'runs/restore_proto_olc_v1/comparison.json'
+comparison_data=json.loads(comparison_path.read_text()) if comparison_path.exists() else {'status':'waiting'}
+
 page(1,'要恢复什么，当前做到哪里','01 / 阅读导引')
 text('本轮目标是在保留原论文主线的前提下恢复 EvoProto：先估计哪些类别容易混淆，再通过显式类别原型指导知识保持和类别分离。最终效果由完整增量链路及消融验证，不能只靠保留模块名称来判断。')
 head('核心机制')
@@ -82,7 +85,12 @@ text('每个类别有一个可学习的 512 维 prototype。图像特征与原�
 text('混淆性建模只使用训练图像的弱标签、CAM、PAR 伪标签和上一阶段教师。得到的混淆关系实际进入 KD 权重和 SEP 对手选择；所有混淆统计停止梯度，不读取增量训练的像素真值。')
 head('当前证据')
 text('共享初始阶段：主头 83.5556，原型分支 83.3298 mIoU。恢复版第一增量阶段已完成 8,000 步：主头 74.6066，原型分支 73.8913 mIoU。后者在 1,240 张验证图像、15 个前景类加背景上计算，输入为 448 × 448。')
-text('完整模型的两阶段增量训练均已完成。最终 21 类主头 mIoU 为 68.7125（square448）和 69.8902（aspect672）；等比例融合为 68.8482 和 70.0644。两组核心消融链路均已完成；在线 OLC 的同预算增量链另行验证。')
+text('无 OLC 完整模型的两阶段增量训练均已完成。最终 21 类主头 mIoU 为 68.7125（square448）和 69.8902（aspect672）；等比例融合为 68.8482 和 70.0644。两组核心消融链路也已完成。')
+if comparison_data.get('status')=='complete':
+ r=comparison_data['comparisons']['aspect672']
+ text('加入 OLC 后，同设备 aspect672 主头为 '+format(r['main']['olc_miou'],'.4f')+'，变化 '+format(r['main']['candidate_minus_reference_pp'],'+.4f')+' 点；固定等比例融合为 '+format(r['fixed_half_prototype_fusion']['olc_miou'],'.4f')+'，变化 '+format(r['fixed_half_prototype_fusion']['candidate_minus_reference_pp'],'+.4f')+' 点。两阶段均为原定 8,000 步，详细对照见第 12 页。')
+else:
+ text('在线 OLC 的同预算完整增量链仍在验证；阶段记录见第 12 页。')
 head('本文如何使用')
 text('第 2 页解释符号与原型；第 3 页说明混淆关系；第 4-5 页给出 KD、SEP 与完整损失；第 6 页规定数据和评估协议；第 7 页记录复现、权重保留和论文修改边界；第 8-9 页给出完整模型与核心消融；第 10-12 页说明 OLC、标签诊断及同预算对比。')
 text('本报告描述本轮实际代码，而非逐式复现原稿。核心三组实验均关闭 ALD。额外续训的旧 ALD 已被排除；新 OLC 专指原 8,000 步内的旧类图像标签校正。',True)
@@ -164,9 +172,9 @@ text('不保存每轮／每次验证的快照，只保存阶段最终权重。�
 head('论文哪些要保留，哪些要改')
 text('保留问题设置、teacher/student、显式可学习原型，以及“混淆指导分离与保持”的主线。当前实现改变了混淆估计、对手选择、SEP 和 KD 的具体公式，需要修订原式 (2)-(7)、总损失式 (11) 及相关结构图箭头。')
 text('特别是原稿对高混淆类别减弱全局原型 MSE；本轮则仅在可信旧类区域加强条件 KD，并在新类区域关闭或衰减 KD。权重方向与约束范围都不同，不能说原公式原样保留。')
-head('尚未完成与结论边界')
+head('结论边界')
 text('核心消融均已完成。混淆消融同时改变 SEP 对手与 KD 权重，没有隔离 KD 权重方向。单 seed、反复查看的验证集及融合选型，不能支持独立测试或跨种子显著性声明。旧 ALD 续训结果不纳入当前方法。')
-text('研究目标仍是保留核心机制并争取同协议接近 71 mIoU。当前完整模型 aspect672 融合为 70.0644，距离 71 为 0.9356 个百分点；主头的混淆收益约 0.82 点；原型增量监督收益约 0.11 点，后者较小，需要谨慎解释。不得把第一阶段的 74.61 当成最终达标。')
+text('无 OLC 主线的 aspect672 融合为 70.0644；主头的混淆收益约 0.82 点，原型增量监督收益约 0.11 点，后者较小，需要谨慎解释。OLC 的完整链收益另见第 12 页；第一阶段的 16 类结果不能替代最终 21 类结果。')
 text('来源：本项目实际训练配置与日志、机制源码、checkpoint_audit.json、数据协议核查，以及原稿第 3-5 页。历史结果只作背景参照；本报告未加入未运行的实验成绩。',True)
 page(8,'完整模型：已核验的最终阶段结果','08 / 成绩与归因分开报告')
 import json
