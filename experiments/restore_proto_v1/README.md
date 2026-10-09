@@ -118,3 +118,7 @@ CPU reevaluation while GPU training continues is supported with `--device cpu --
 ### Legacy flags versus effective restoration losses
 
 The inherited CLI flags `w_proto_kd=0`, `w_proto_sep=0` and `confusion_reweight=false` disable the old coordinate-MSE/geometry separation and old class-weight code paths. They do **not** switch off the restored `ConfusionProto` module. After iteration 2000 the full arm uses main/prototype BCE 0.1/0.1, main/prototype prediction KD 0.1/0.05, main/prototype prediction SEP 0.02/0.05, and old-prototype direction consistency 0.01. `without_proto` sets the four prototype-specific contributions to zero; `without_confusion` substitutes a uniform foreground graph and unit KD degree. `relation_metrics.jsonl` records the restored terms, and `tools/summarize_restore_proto.py` lists their effective settings alongside each stage.
+
+### Fixed inference comparison after the full-model grid
+
+The full-model validation grid selected equal probability fusion (`alpha=0.5`): square448 68.8482 and aspect672 70.0644, versus main-only 68.7125 and 69.8902. Main-only remains the common primary ablation metric. The fixed fusion coefficient applies to **prototype-enabled** arms; `without_proto` uses main only, since blending its untrained incremental prototype predictions would create a misleading control. Full fused versus no-prototype main is a whole-module comparison and must be labeled separately. This selection used VOC validation, not an independent held-out test set.
