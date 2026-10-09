@@ -45,7 +45,14 @@ def main():
     assert digest == receipt['sha256'], 'Final checkpoint digest mismatch'
     assert inside(receipt['path']) == checkpoint
     for relative, expected in receipt['source_sha256'].items():
-        assert sha(inside(ROOT / relative)) == expected, 'Source changed: ' + relative
+        actual = sha(inside(ROOT / relative))
+        if actual != expected:
+            amendment = read(ROOT / 'runs/restore_proto_v1/control/evaluation_source_amendment.json')
+            assert relative == amendment['file'] == 'experiments/restore_proto_v1/evaluate.py'
+            assert expected == amendment['before_sha256'] and actual == amendment['after_sha256']
+            assert sha(inside(ROOT / amendment['original_copy'])) == expected
+            assert amendment['training_source_changed'] is False
+
     predecessor = read(stage_dir / 'predecessor.json')
     parent_path = inside(predecessor['path'])
     assert sha(parent_path) == predecessor['sha256'], 'Predecessor digest mismatch'
@@ -75,7 +82,8 @@ def main():
         prototypes.append(row)
     result = {'checkpoint': str(checkpoint), 'sha256': digest, 'variant': config['variant'],
               'stage': stage, 'iteration': raw['iteration'], 'strict_model_load': True,
-              'all_tensors_finite': True, 'source_matches_receipt': True,
+              'all_tensors_finite': True, 'training_source_matches_receipt': True,
+              'evaluation_source_amendment': read(ROOT / 'runs/restore_proto_v1/control/evaluation_source_amendment.json') if (ROOT / 'runs/restore_proto_v1/control/evaluation_source_amendment.json').exists() else None,
               'predecessor': predecessor, 'prototypes': prototypes,
               'note': 'Parameter presence/change alone does not prove causal benefit; use loss/gradient evidence and full-chain ablations.'}
     output = stage_dir / 'checkpoint_audit.json'

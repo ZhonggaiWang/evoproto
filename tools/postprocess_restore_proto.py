@@ -45,11 +45,6 @@ def wait_for(path):
 def stop(*unused):
     if child is not None and child.poll() is None:
         os.killpg(child.pid, signal.SIGTERM)
-        try:
-            child.wait(timeout=15)
-        except subprocess.TimeoutExpired:
-            os.killpg(child.pid, signal.SIGKILL)
-            child.wait()
     raise KeyboardInterrupt
 
 
@@ -61,7 +56,15 @@ def run(script, arguments, logfile):
     with logfile.open('a') as stream:
         child = subprocess.Popen(command, cwd=ROOT, env=env, stdout=stream,
                                  stderr=subprocess.STDOUT, start_new_session=True)
-        code = child.wait()
+        try:
+            code = child.wait()
+        except BaseException:
+            try:
+                child.wait(timeout=15)
+            except subprocess.TimeoutExpired:
+                os.killpg(child.pid, signal.SIGKILL)
+                child.wait()
+            raise
     if code:
         raise RuntimeError(f'{script} exited {code}; inspect {logfile}')
 
@@ -75,8 +78,23 @@ def main():
             wait_for(directory / 'final_receipt.json')
             run('audit_restore_proto_checkpoint.py', ['--stage-dir', str(directory)],
                 directory / 'checkpoint_audit.log')
-        wait_for(directory / 'evaluation.json')
-        official = read(directory / 'evaluation.json')
+        official_path = directory / 'evaluation.json'
+        archive = directory / 'evaluation_invalid_uint8.json'
+        if not archive.exists():
+            wait_for(official_path)
+        official = read(official_path) if official_path.exists() else {}
+        expected = json.loads((directory / 'metrics.jsonl').read_text().splitlines()[-1])['all_miou']
+        if official.get('histogram_label_dtype') != 'int64':
+            if official_path.exists():
+                assert not archive.exists()
+                official_path.rename(archive)
+            run(str(ROOT / 'experiments/restore_proto_v1/evaluate.py'),
+                ['--checkpoint', str(directory / 'checkpoints/model_final.pth'), '--stage', '2',
+                 '--output', str(official_path), '--device', 'cpu', '--threads', '8'],
+                directory / 'evaluation_int64_cpu.log')
+            official = read(official_path)
+        assert abs(official['results']['square448']['main']['miou'] - expected) < .2
+        assert official['histogram_label_dtype'] == 'int64'
         output = directory / 'fusion_evaluation.json'
         if not output.exists():
             run('evaluate_restore_proto_fusion.py', ['--checkpoint', str(directory / 'checkpoints/model_final.pth'),
@@ -103,7 +121,7 @@ def main():
                 for index, alpha in enumerate(fusion['alphas']):
                     assert np.array_equal(aggregate[index], fusion['results'][mode][str(alpha)]['histogram'])
         verification = {'checkpoint_sha256': fusion['checkpoint_sha256'], 'images': 1449,
-                        'cpu_minus_gpu_miou': differences, 'per_image_histograms_verified': True}
+                        'fusion_minus_standalone_miou': differences, 'standalone_device': official.get('device', 'cuda'), 'per_image_histograms_verified': True}
         (directory / 'fusion_verification.json').write_text(json.dumps(verification, indent=2))
         status(state='variant_completed', variant=variant)
     status(state='completed')

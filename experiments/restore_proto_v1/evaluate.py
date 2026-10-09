@@ -12,24 +12,36 @@ from model.model_seg_neg import network
 from datasets.voc import VOC12SegDataset,class_list
 
 
+def confusion_matrix(label, prediction, classes):
+    """Encode pixel pairs in int64, including when palette labels arrive as uint8."""
+    label=label.to(dtype=torch.int64);prediction=prediction.to(dtype=torch.int64)
+    valid=(label>=0)&(label<classes)
+    return torch.bincount((label[valid]*classes+prediction[valid]).flatten(),minlength=classes*classes).reshape(classes,classes)
+
+
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--checkpoint',required=True);p.add_argument('--stage',type=int,required=True);p.add_argument('--output',required=True);p.add_argument('--square-only',action='store_true');p.add_argument('--expected-square',type=float);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--checkpoint',required=True);p.add_argument('--stage',type=int,required=True);p.add_argument('--output',required=True);p.add_argument('--device',choices=['cuda','cpu'],default='cuda');p.add_argument('--threads',type=int,default=8);p.add_argument('--square-only',action='store_true');p.add_argument('--expected-square',type=float);a=p.parse_args()
     output=Path(a.output).resolve();assert output.is_relative_to(ROOT)
-    dist.init_process_group('nccl');rank=dist.get_rank();world=dist.get_world_size();torch.cuda.set_device(rank);torch.set_num_threads(4)
+    distributed=a.device=='cuda'
+    if distributed:
+        dist.init_process_group('nccl');rank=dist.get_rank();world=dist.get_world_size();torch.cuda.set_device(rank)
+    else:rank=0;world=1
+    device=torch.device(a.device);torch.set_num_threads(4 if distributed else a.threads)
     torch.set_float32_matmul_precision('high');torch.backends.cudnn.allow_tf32=True;torch.backends.cudnn.benchmark=False
     classes=[11]+[5]*a.stage;k=sum(classes)
     net=network('vit_base_patch16_224',num_classes=k,classes_list=classes,pretrained=False,init_momentum=.9,aux_layer=-3)
     raw=torch.load(a.checkpoint,map_location='cpu',weights_only=True)
     net.load_state_dict({key.removeprefix('module.'):v for key,v in raw['model_state'].items()},strict=True);del raw
-    net.cuda().eval()
+    net.to(device).eval()
     ds=VOC12SegDataset(root_dir='/data/zhonggai/coco/PascalVOC12',name_list_dir=str(ROOT/'datasets/voc'),split='val',stage='val',aug=False,ignore_index=255,num_classes=21,tasks='10-5',step=a.stage)
     ds.label_dir='/data/zhonggai/coco/PascalVOC12/SegmentationClass'
     loader=DataLoader(Subset(ds,range(rank,len(ds),world)),batch_size=1,num_workers=2,shuffle=False)
     modes=['square448'] if a.square_only else ['square448','aspect672']
-    matrices={m:torch.zeros(2,k,k,device='cuda',dtype=torch.float64) for m in modes}
+    matrices={m:torch.zeros(2,k,k,device=device,dtype=torch.float64) for m in modes}
     with torch.inference_mode():
         for _,image,label,_ in loader:
-            image=image.cuda();label=label.cuda();h,w=image.shape[-2:]
+            image=image.to(device);label=label.to(device=device,dtype=torch.int64);h,w=image.shape[-2:]
+            # Palette masks are uint8: promote BEFORE label*k, otherwise classes 13+ overflow for k=21.
             for mode in modes:
                 scale=672/math.sqrt(h*w)
                 size=(448,448) if mode=='square448' else tuple(max(16,round(x*scale/16)*16) for x in (h,w))
@@ -37,10 +49,10 @@ def main():
                 valid=(label>=0)&(label<k)
                 for i,z in enumerate([main,proto]):
                     pred=F.interpolate(z,size=(h,w),mode='bilinear',align_corners=False).argmax(1)
-                    matrices[mode][i]+=torch.bincount((label[valid]*k+pred[valid]).flatten(),minlength=k*k).reshape(k,k)
-    result={'stage':a.stage,'images':len(ds),'checkpoint':str(Path(a.checkpoint).resolve()),'prediction_uses_gt_tags':False,'aspect_rule':'area approximately 672 squared; each dimension rounded to nearest multiple of16','results':{}}
+                    matrices[mode][i]+=confusion_matrix(label,pred,k)
+    result={'stage':a.stage,'images':len(ds),'checkpoint':str(Path(a.checkpoint).resolve()),'prediction_uses_gt_tags':False,'histogram_label_dtype':'int64','evaluator_revision':'int64-v2','device':str(device),'aspect_rule':'area approximately 672 squared; each dimension rounded to nearest multiple of16','results':{}}
     for mode,mat in matrices.items():
-        dist.all_reduce(mat)
+        if distributed:dist.all_reduce(mat)
         result['results'][mode]={}
         for i,name in enumerate(['main','prototype']):
             hm=mat[i];den=hm.sum(0)+hm.sum(1)-hm.diag();iou=torch.where(den>0,100*hm.diag()/den,torch.nan)
@@ -56,6 +68,6 @@ def main():
         print(json.dumps({m:{n:v['miou'] for n,v in r.items()} for m,r in result['results'].items()}),flush=True)
     score=result['results']['square448']['main']['miou']
     if a.expected_square is not None and abs(score-a.expected_square)>.2:raise RuntimeError(f'Initial checkpoint evaluation mismatch: {score} vs {a.expected_square}')
-    dist.destroy_process_group()
+    if distributed:dist.destroy_process_group()
 
 if __name__=='__main__':main()
