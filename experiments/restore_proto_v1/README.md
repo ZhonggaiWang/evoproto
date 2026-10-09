@@ -102,3 +102,5 @@ CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 .runtime/restore_proto/venv/bi
 该检查只用 CPU，核对 checkpoint 与前驱的 SHA256、冻结训练源码、8,000 次更新记录、完整模型严格加载、所有参数有限值，以及各阶段 512 维原型参数的形状和范数。旧原型相对前驱的变化量也会保存到阶段目录的 `checkpoint_audit.json`。参数存在或发生变化本身不能证明性能贡献，仍须结合实际损失／梯度与完整链路消融。
 
 清理权重时，最终采用方法的共享 step0、step1 前驱和 step2 最终权重需要一起保护。其他候选须在完成所需评估与比较后再决定是否删除；不按文件时间或名称模糊批量删除。
+
+`tools/postprocess_restore_proto.py` 是有限的 CPU 后处理队列：等待每组正式回执，核查各阶段最终权重，等待官方双卡评估完成后，对最终模型执行同一固定融合网格。它检查两种协议的 CPU/GPU 端点差异、1449 张图像唯一性和逐图混淆矩阵汇总；结果写入各组 step2 的 `fusion_evaluation.json`、`.npz` 和 `fusion_verification.json`。该任务不会修改权重，训练继续使用原两张卡。队列状态在 control/postprocess_state.json；若正式协调进程结束而所需结果缺失，队列报错退出。
