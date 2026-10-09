@@ -1,0 +1,530 @@
+{
+  "status": "Step1 complete; Step2 and control chains running or pending",
+  "not_final_study_result": true,
+  "training_code_commit": "4b6395a4396b5b5c4a5de0d3ccbcb4d112357e03",
+  "arm": "correct",
+  "stage": 1,
+  "iterations": 8000,
+  "global_batch": 8,
+  "seed": 0,
+  "milestones": {
+    "4000": {
+      "time": 1791568503.1134386,
+      "stage": 1,
+      "iteration": 4000,
+      "baseline_source": "runs/restore_proto_v1/formal/full/10-5/step1/metrics.jsonl",
+      "correct_source": "runs/restore_proto_seed_v1/formal/correct/10-5/step1/metrics.jsonl",
+      "metric_comparison": {
+        "all_miou": {
+          "baseline": 71.51847554989374,
+          "correct": 72.85609566785013,
+          "delta_points": 1.3376201179563907
+        },
+        "previous_foreground_miou": {
+          "baseline": 75.538003413522,
+          "correct": 75.58124136711649,
+          "delta_points": 0.04323795359448468
+        },
+        "current_foreground_miou": {
+          "baseline": 59.22964724507024,
+          "correct": 63.391702211287864,
+          "delta_points": 4.1620549662176245
+        },
+        "prototype_miou": {
+          "baseline": 70.9020493634502,
+          "correct": 71.60608820230854,
+          "delta_points": 0.7040388388583381
+        }
+      },
+      "class_iou_comparison": {
+        "_background_": {
+          "baseline": 92.76733843772857,
+          "correct": 92.9266059579977,
+          "delta_points": 0.15926752026912538
+        },
+        "aeroplane": {
+          "baseline": 85.44136046204088,
+          "correct": 85.59780321081352,
+          "delta_points": 0.15644274877264763
+        },
+        "bicycle": {
+          "baseline": 40.2201205644449,
+          "correct": 39.06426840058838,
+          "delta_points": -1.1558521638565153
+        },
+        "bird": {
+          "baseline": 89.1610265384346,
+          "correct": 89.53251620723475,
+          "delta_points": 0.37148966880015166
+        },
+        "boat": {
+          "baseline": 73.86356873187027,
+          "correct": 72.61269811027249,
+          "delta_points": -1.2508706215977838
+        },
+        "bottle": {
+          "baseline": 78.11715095256831,
+          "correct": 74.2917040679489,
+          "delta_points": -3.82544688461941
+        },
+        "bus": {
+          "baseline": 91.93681372032248,
+          "correct": 91.61716390082236,
+          "delta_points": -0.31964981950011406
+        },
+        "car": {
+          "baseline": 83.36591023515626,
+          "correct": 83.54922436107586,
+          "delta_points": 0.18331412591959406
+        },
+        "cat": {
+          "baseline": 79.63790157669177,
+          "correct": 82.6580459770115,
+          "delta_points": 3.0201444003197224
+        },
+        "chair": {
+          "baseline": 51.03579402362995,
+          "correct": 50.21774551020841,
+          "delta_points": -0.8180485134215374
+        },
+        "cow": {
+          "baseline": 82.60038733006054,
+          "correct": 86.67124392518869,
+          "delta_points": 4.070856595128149
+        },
+        "diningtable": {
+          "baseline": 38.4639423418031,
+          "correct": 39.571833666750834,
+          "delta_points": 1.1078913249477367
+        },
+        "dog": {
+          "baseline": 45.8697300640726,
+          "correct": 61.76049307695647,
+          "delta_points": 15.890763012883873
+        },
+        "horse": {
+          "baseline": 73.56112645737576,
+          "correct": 77.34614207360138,
+          "delta_points": 3.785015616225621
+        },
+        "motorbike": {
+          "baseline": 71.07385836956921,
+          "correct": 72.38800843304772,
+          "delta_points": 1.3141500634785075
+        },
+        "person": {
+          "baseline": 67.17957899253051,
+          "correct": 65.8920338060829,
+          "delta_points": -1.287545186447602
+        }
+      },
+      "prospective_correction": {
+        "valid": 14832272,
+        "new_pixels": 1813165,
+        "old_pixels": 2532315,
+        "old_on_new_before": 183881,
+        "old_on_new_after": 177933,
+        "new_on_old_before": 13877,
+        "new_on_old_after": 14480,
+        "changed_valid": 6577,
+        "changed_to_true_new": 5948,
+        "changed_from_true_old": 603,
+        "seed_valid": 2182,
+        "seed_correct": 2148,
+        "images": 80,
+        "pixel_gt_used_in_selection": false,
+        "graph_updated": false,
+        "prospective_correction": true,
+        "proposal_precision": 0.9043636916527292,
+        "seed_precision": 0.9844179651695693,
+        "old_absorption_reduction_fraction": 0.0323470070317216
+      },
+      "prior_diagnostic_2000": {
+        "valid": 14832272,
+        "new_pixels": 1813165,
+        "old_pixels": 2532315,
+        "old_on_new_before": 281090,
+        "old_on_new_after": 258081,
+        "new_on_old_before": 72621,
+        "new_on_old_after": 72668,
+        "changed_valid": 23056,
+        "changed_to_true_new": 23009,
+        "changed_from_true_old": 47,
+        "seed_valid": 1061,
+        "seed_correct": 1014,
+        "images": 80,
+        "pixel_gt_used_in_selection": false,
+        "graph_updated": false,
+        "prospective_correction": true
+      },
+      "interpretation": [
+        "Intermediate single-seed result; not final Step2 outcome.",
+        "Segmentation scores compare identical 4000-update square448 validation protocols on1240images.",
+        "80-image prospective pseudo-label diagnosis is not cumulative training accuracy.",
+        "No matching baseline4000 pseudo-label diagnosis exists; before/after within this diagnosis isolates label replacement only, not the training benefit.",
+        "Do not change frozen hyperparameters in response to this intermediate checkpoint."
+      ]
+    },
+    "6000": {
+      "time": 1791569471.2194462,
+      "stage": 1,
+      "iteration": 6000,
+      "baseline_source": "runs/restore_proto_v1/formal/full/10-5/step1/metrics.jsonl",
+      "correct_source": "runs/restore_proto_seed_v1/formal/correct/10-5/step1/metrics.jsonl",
+      "metric_comparison": {
+        "all_miou": {
+          "baseline": 73.97366608290562,
+          "correct": 73.71983352838326,
+          "delta_points": -0.2538325545223614
+        },
+        "previous_foreground_miou": {
+          "baseline": 76.17696895845259,
+          "correct": 76.4678540824772,
+          "delta_points": 0.2908851240246122
+        },
+        "current_foreground_miou": {
+          "baseline": 65.72216860380338,
+          "correct": 64.32603989506308,
+          "delta_points": -1.3961287087403065
+        },
+        "prototype_miou": {
+          "baseline": 72.88925777065259,
+          "correct": 72.71584120315624,
+          "delta_points": -0.17341656749634637
+        }
+      },
+      "class_iou_comparison": {
+        "_background_": {
+          "baseline": 93.19812472294733,
+          "correct": 93.20859615404497,
+          "delta_points": 0.010471431097641926
+        },
+        "aeroplane": {
+          "baseline": 85.67633634247602,
+          "correct": 85.86638687019422,
+          "delta_points": 0.1900505277181992
+        },
+        "bicycle": {
+          "baseline": 40.108893018176225,
+          "correct": 39.72823695143599,
+          "delta_points": -0.38065606674023655
+        },
+        "bird": {
+          "baseline": 89.60823188540749,
+          "correct": 89.66354781138163,
+          "delta_points": 0.05531592597414203
+        },
+        "boat": {
+          "baseline": 72.88829513702842,
+          "correct": 72.74565590953483,
+          "delta_points": -0.14263922749358926
+        },
+        "bottle": {
+          "baseline": 80.29951719588412,
+          "correct": 79.05652428310064,
+          "delta_points": -1.2429929127834782
+        },
+        "bus": {
+          "baseline": 92.19676347467592,
+          "correct": 92.3100867247638,
+          "delta_points": 0.11332325008788757
+        },
+        "car": {
+          "baseline": 84.77039591521255,
+          "correct": 85.10256164515543,
+          "delta_points": 0.3321657299428864
+        },
+        "cat": {
+          "baseline": 84.67918390432388,
+          "correct": 84.59097406976402,
+          "delta_points": -0.08820983455986209
+        },
+        "chair": {
+          "baseline": 48.29025821921435,
+          "correct": 51.475892114374325,
+          "delta_points": 3.185633895159974
+        },
+        "cow": {
+          "baseline": 83.25181449212684,
+          "correct": 84.13867444506702,
+          "delta_points": 0.8868599529401848
+        },
+        "diningtable": {
+          "baseline": 47.38861643091656,
+          "correct": 40.1727129251421,
+          "delta_points": -7.215903505774456
+        },
+        "dog": {
+          "baseline": 66.01326577013033,
+          "correct": 62.00110541598312,
+          "delta_points": -4.012160354147213
+        },
+        "horse": {
+          "baseline": 74.40211517845152,
+          "correct": 73.95840023397523,
+          "delta_points": -0.443714944476298
+        },
+        "motorbike": {
+          "baseline": 73.38645361931813,
+          "correct": 74.93004274724359,
+          "delta_points": 1.5435891279254577
+        },
+        "person": {
+          "baseline": 67.42039202020035,
+          "correct": 70.56793815297132,
+          "delta_points": 3.1475461327709695
+        }
+      },
+      "prospective_correction": {
+        "valid": 14832272,
+        "new_pixels": 1813165,
+        "old_pixels": 2532315,
+        "old_on_new_before": 177253,
+        "old_on_new_after": 165400,
+        "new_on_old_before": 6901,
+        "new_on_old_after": 7605,
+        "changed_valid": 12583,
+        "changed_to_true_new": 11853,
+        "changed_from_true_old": 704,
+        "seed_valid": 2435,
+        "seed_correct": 2406,
+        "images": 80,
+        "pixel_gt_used_in_selection": false,
+        "graph_updated": false,
+        "prospective_correction": true,
+        "proposal_precision": 0.9419852181514742,
+        "seed_precision": 0.9880903490759754,
+        "old_absorption_reduction_fraction": 0.06687051841153606
+      },
+      "interpretation": [
+        "Intermediate single-seed result; not final Step2 outcome.",
+        "4000update segmentation advantage did not persist at6000; report both checkpoints.",
+        "80image prospective correction metrics are not accumulated training accuracy.",
+        "No matching baseline6000 pseudo-label diagnosis exists.",
+        "Training configuration remains frozen pending full experiment completion."
+      ]
+    },
+    "8000": {
+      "time": 1791570483.5297017,
+      "stage": 1,
+      "iteration": 8000,
+      "baseline_source": "runs/restore_proto_v1/formal/full/10-5/step1/metrics.jsonl",
+      "correct_source": "runs/restore_proto_seed_v1/formal/correct/10-5/step1/metrics.jsonl",
+      "metric_comparison": {
+        "all_miou": {
+          "baseline": 74.60657212380822,
+          "correct": 74.27524312079953,
+          "delta_points": -0.3313290030086904
+        },
+        "previous_foreground_miou": {
+          "baseline": 76.66785417797625,
+          "correct": 76.63625483044976,
+          "delta_points": -0.031599347526494626
+        },
+        "current_foreground_miou": {
+          "baseline": 66.73652950220438,
+          "correct": 65.75139457712031,
+          "delta_points": -0.9851349250840684
+        },
+        "prototype_miou": {
+          "baseline": 73.89129414409567,
+          "correct": 73.75554335643923,
+          "delta_points": -0.1357507876564341
+        }
+      },
+      "class_iou_comparison": {
+        "_background_": {
+          "baseline": 93.34396469014729,
+          "correct": 93.28436874269357,
+          "delta_points": -0.059595947453715326
+        },
+        "aeroplane": {
+          "baseline": 85.61628525111814,
+          "correct": 86.02227597261769,
+          "delta_points": 0.40599072149954907
+        },
+        "bicycle": {
+          "baseline": 39.71396857476452,
+          "correct": 38.6093328101228,
+          "delta_points": -1.1046357646417206
+        },
+        "bird": {
+          "baseline": 90.69872443609006,
+          "correct": 90.13511651577174,
+          "delta_points": -0.5636079203183186
+        },
+        "boat": {
+          "baseline": 72.75869882508991,
+          "correct": 72.82561659063765,
+          "delta_points": 0.06691776554774265
+        },
+        "bottle": {
+          "baseline": 80.21790221570146,
+          "correct": 80.44827148977024,
+          "delta_points": 0.23036927406877794
+        },
+        "bus": {
+          "baseline": 92.41517045715277,
+          "correct": 92.47141984756513,
+          "delta_points": 0.05624939041236132
+        },
+        "car": {
+          "baseline": 85.20968662157671,
+          "correct": 84.7038535742438,
+          "delta_points": -0.5058330473329136
+        },
+        "cat": {
+          "baseline": 86.31359576569344,
+          "correct": 85.39985679672652,
+          "delta_points": -0.9137389689669106
+        },
+        "chair": {
+          "baseline": 50.37520482802537,
+          "correct": 51.65596687464701,
+          "delta_points": 1.2807620466216392
+        },
+        "cow": {
+          "baseline": 83.35930480455005,
+          "correct": 84.09083783239493,
+          "delta_points": 0.7315330278448755
+        },
+        "diningtable": {
+          "baseline": 46.373728676473014,
+          "correct": 41.095245419769725,
+          "delta_points": -5.278483256703289
+        },
+        "dog": {
+          "baseline": 69.50014705386766,
+          "correct": 69.19765219749479,
+          "delta_points": -0.3024948563728742
+        },
+        "horse": {
+          "baseline": 73.42412904989453,
+          "correct": 74.58609329624379,
+          "delta_points": 1.1619642463492568
+        },
+        "motorbike": {
+          "baseline": 73.96317388291327,
+          "correct": 73.87326163147303,
+          "delta_points": -0.08991225144023929
+        },
+        "person": {
+          "baseline": 70.42146884787334,
+          "correct": 70.00472034062014,
+          "delta_points": -0.4167485072532031
+        }
+      },
+      "prospective_correction": {
+        "valid": 14832272,
+        "new_pixels": 1813165,
+        "old_pixels": 2532315,
+        "old_on_new_before": 170147,
+        "old_on_new_after": 147898,
+        "new_on_old_before": 6838,
+        "new_on_old_after": 7714,
+        "changed_valid": 23151,
+        "changed_to_true_new": 22249,
+        "changed_from_true_old": 876,
+        "seed_valid": 2541,
+        "seed_correct": 2510,
+        "images": 80,
+        "pixel_gt_used_in_selection": false,
+        "graph_updated": false,
+        "prospective_correction": true,
+        "proposal_precision": 0.9610384000691115,
+        "seed_precision": 0.9878000787091696,
+        "old_absorption_reduction_fraction": 0.13076339870817588
+      },
+      "interpretation": [
+        "Final Step1 checkpoint; Step2 and complete controls remain pending.",
+        "80image prospective correction metrics are not accumulated training accuracy.",
+        "No matching baseline8000 80image pseudo-label diagnosis exists; separate200image audits have different coverage and graph sources."
+      ]
+    }
+  },
+  "matched_pseudo_labels": {
+    "time": 1791570710.2849326,
+    "images": 200,
+    "matched_names_and_gt_pixel_counts": true,
+    "baseline_source": "runs/restore_proto_seed_v1/control/baseline_step1_audit.json",
+    "correct_source": "runs/restore_proto_seed_v1/formal/correct/10-5/step1/seed_audit.json",
+    "before_replacement_comparison": {
+      "old_on_new_before": {
+        "baseline": 393266,
+        "correct_trained": 332318,
+        "delta_pixels": -60948
+      },
+      "new_on_old_before": {
+        "baseline": 144159,
+        "correct_trained": 112674,
+        "delta_pixels": -31485
+      },
+      "correct_before": {
+        "baseline": 34348914,
+        "correct_trained": 34418068,
+        "delta_pixels": 69154
+      }
+    },
+    "baseline_pseudo_label_pixel_accuracy": 0.9268405314377518,
+    "correct_trained_pseudo_label_pixel_accuracy": 0.9287065214399699,
+    "interpretation": [
+      "Before-replacement labels combine identical frozen Step0 teacher with each trained model own novel CAM/PAR output. Graph gating has not been applied to these labels.",
+      "This is pixel-weighted pseudo-label diagnosis on200fixedimages, not class-averaged segmentation mIoU.",
+      "After-replacement comparisons additionally differ in graph source: baseline200trainingimage calibration vs candidate online training graph.",
+      "Changes in pseudo-label accuracy do not prove final decoder improvement."
+    ]
+  },
+  "prototype_and_lineage": {
+    "time": 1791570606.1697228,
+    "stage1_final_sha256": "93ed72243fc06794d74b28dc937b92f251643b0cc2d0696c25bbd0c77d4aed1e",
+    "stage2_predecessor_matches": true,
+    "prototype_audit": {
+      "checkpoint_sha256": "93ed72243fc06794d74b28dc937b92f251643b0cc2d0696c25bbd0c77d4aed1e",
+      "predecessor_sha256": "4f298e14721630cf3c66ba4f6af04bd198ebeaf77adc6b7b07ab8403ad0893b5",
+      "prototype_blocks": {
+        "decoder.class_prototypes.0.prototype": [
+          11,
+          512
+        ],
+        "decoder.class_prototypes.1.prototype": [
+          5,
+          512
+        ]
+      },
+      "old_foreground_classes": 10,
+      "mean_old_cosine": 0.9662332593773686,
+      "max_old_direction_displacement": 0.29501787305904736,
+      "per_old_class_displacement": [
+        0.28564391835473796,
+        0.2607555863794332,
+        0.29501787305904736,
+        0.2623190277921836,
+        0.2727899499205057,
+        0.2773369656235508,
+        0.24980939702194593,
+        0.224933300473186,
+        0.23439798389097302,
+        0.22501062670925218
+      ],
+      "direction_changed_beyond_decay": true,
+      "interpretation": "Direction changes plus active loss/source checks support actual prototype optimization; this is not evidence of segmentation benefit by itself."
+    },
+    "independent_eval_matches_training_validation": true,
+    "stage1_checkpoint_files": [
+      "checkpoints/model_final.pth"
+    ],
+    "stage2_torchrun_pid": 1907108,
+    "stage2_rank_pids": [
+      1907128,
+      1907129
+    ],
+    "processes_alive": {
+      "1812807": true,
+      "1836614": true,
+      "1907108": true,
+      "1907128": true,
+      "1907129": true
+    },
+    "note": "No independent aspect672 baselineStep1 evaluation available; only square448 training validation is currently compared at Step1."
+  }
+}
