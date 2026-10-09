@@ -84,3 +84,9 @@
 当前运行的第二版占用程序源码亦保存在 `tools/restore_proto_reservation_v2.py`，与运行副本内容一致。它读取 `runs/restore_proto_v1/control/reservation_request.json` 中的 `mode`（`reserve` / `training` / `stop`）；交接标记 `reservation_v2_adopt` 存在后写正式 heartbeat。研究 runner 负责在训练、验证与间隔之间切换模式。已有占用／训练进程运行时不要再启动一份。
 
 从干净目录恢复本机运行时，须先确认物理5、6号卡空闲，准备所需前驱权重和项目环境，再创建 control 目录、写入 `{"mode":"reserve"}` 请求、创建 `reservation_v2_adopt` 标记，并以这两张卡对应的 CUDA UUID 启动占用程序，记录其 PID 到 `reservation.pid`。收到新鲜 heartbeat 后再启动研究 runner。整个 goal 完成时发出 `stop` 并核实本任务进程已退出。
+
+## 固定网格的推理融合诊断
+
+`tools/evaluate_restore_proto_fusion.py` 不训练参数，比较原型概率权重 alpha = 0、0.25、0.5、0.75、1。主头与原型头都采用 BCE 训练，因此诊断使用 `(1-alpha) * sigmoid(main_logits) + alpha * sigmoid(prototype_cosine / 0.1)`；先将 logits 插值回原图，再变换概率。端点直接以各分支 logits 取 argmax，避免 sigmoid 饱和造成端点数值平局。
+
+该诊断默认在 CPU 上运行，可与 GPU 训练并行；先用共享 step0 核对 GPU 主头分数。每张图片的混淆矩阵会保留为紧凑 NPZ，供之后核验或配对分析。alpha 网格在最终增量结果出现前固定。若采用融合推理，必须公开全部取值，并给需要比较的实验使用同一 alpha；任何验证集选参都不能被表述为独立测试证据。主头的 square448 与 aspect672 原协议结果仍须保留。
