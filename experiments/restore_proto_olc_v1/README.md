@@ -38,8 +38,21 @@ The runner records source hashes, predecessor hashes and commands, uses the exis
 Status: two-stage GPU smoke and two-rank memory tests passed; the formal OLC chain is running. The disabled-OLC smoke differs by 0.00214 mIoU points from baseline; an unchanged-baseline repeat differs by 0.00172 points. Runs are not bitwise deterministic, and no exact-equality claim is made. No OLC segmentation gain is claimed yet. Old ALD extra-refinement results are excluded from this method.
 
 
-## Interim observation (Step 1, 4,000 updates; not a final result)
+## Step 1 completed; full-chain conclusion still pending
 
-On the 1,240-image Step-1 validation set with square448 input, OLC main-head mIoU is 73.73630 versus 71.51848 without OLC (+2.21782 points). The prototype head is 72.21866 versus 70.90205 (+1.31661). Old foreground improves by 0.35479 points and current foreground by 6.30342 points. This follows a negative 2,000-step warmup comparison (45.93328 versus 47.08372), so intermediate rankings must not substitute for the completed chain.
+Step 1 finished all 8,000 updates. Its final square448 main-head mIoU is **75.28924**, compared with **74.60657** without OLC (**+0.68267 points**). The prototype head is **74.76473** versus **73.89129** (+0.87344); old foreground improves by 0.42290 points and new foreground by 1.29887 points. CAM / auxiliary CAM diagnostics are 72.16626 / 74.65226, using validation image tags; segmentation inference uses no tags.
 
-The 4,000-step prediction-memory audit gives precision 60.5616%, recall 89.6629%, coverage 98.5023%. Main-head-only decisions from the same EMA give precision 54.3216%, recall 92.5094%. Screening removes false positives but also sacrifices recall. All of these annotations are joined by a separate offline process; they are not training inputs. Two correlated teacher heads can still agree on a wrong class, and crop predictions are not equivalent to whole-image presence labels.
+| Step-1 updates | No-OLC main | OLC main | Change |
+| --- | ---: | ---: | ---: |
+| 2,000 | 47.08372 | 45.93328 | -1.15043 |
+| 4,000 | 71.51848 | 73.73630 | +2.21782 |
+| 6,000 | 73.97367 | 74.57842 | +0.60475 |
+| 8,000 | 74.60657 | 75.28924 | +0.68267 |
+
+Do not substitute the peak intermediate difference for the final stage difference. Independent evaluation confirms square448 main 75.28933 (less than 0.001 points from training validation), and aspect672 main 76.16801. These are 16-class Step-1 results, not the final 21-class benchmark.
+
+Final Step-1 checkpoint SHA256: `43dfc9d5e614d141137f7c5a6e5043797924e22c79c0b559f1cedf7903e5c9db`. Finite-value/prototype-block checks passed. Step 2 is running from this exact checkpoint, with two verified workers on physical GPUs 5 and 6 and batch 4 per rank.
+
+The final Step-1 memory audit gives precision 60.2092%, recall 90.5618%, and coverage 98.5005%. Main-head-only decisions from the same EMA give precision 54.2200% and recall 93.5955%. Screening removes 512 false positives while excluding 81 true positives relative to that same-memory comparison. These annotations are joined offline and never enter training. Two correlated teacher heads can still agree on a wrong class, and crop predictions are not equivalent to whole-image presence labels.
+
+Final evaluation will run the no-OLC reference and OLC sequentially on the same GPU, using identical square448/aspect672 inputs and the already fixed 0.5 prototype fusion. This changes evaluation hardware from the earlier CPU reference, not the training budget or prediction rule. Both endpoints will be checked against independent evaluation before comparison.
