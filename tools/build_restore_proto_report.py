@@ -271,13 +271,16 @@ if data.get('status')=='complete':
  text('aspect672 主头：旧前景变化 '+format(r['old_delta_pp'],'+.4f')+' 点，新前景变化 '+format(r['new_delta_pp'],'+.4f')+' 点。配对图像 bootstrap 区间为 ['+', '.join(format(v,'.4f') for v in r['paired_image_bootstrap_95_percentile_interval'])+']。这不是跨训练种子的显著性证明。')
 else:
  text('OLC 完整增量链或最终验证尚未全部完成，因此暂不能判断是否改善最终分割。下面只列已经写入验证日志的最新阶段记录，不将中途数字当成最终效果。')
- rows=[['阶段 / 更新','主头','原型','CAM / 辅助 CAM']]
+ rows=[['阶段 / 更新','无 OLC','OLC','主头变化','原型','CAM / 辅助 CAM']]
  for stage in [1,2]:
   p=ROOT/f'runs/restore_proto_olc_v1/formal/olc/10-5/step{stage}/metrics.jsonl'
   if p.exists():
-   r=json.loads(p.read_text().splitlines()[-1]);rows.append([f'Step {stage} / {r["iteration"]}',format(r['all_miou'],'.3f'),format(r['prototype_miou'],'.3f'),format(r['cam_miou'],'.3f')+' / '+format(r['auxiliary_cam_miou'],'.3f')])
-  else:rows.append([f'Step {stage} / 待验证','-','-','-'])
- result_table(rows,[170,93,93,155])
+   r=json.loads(p.read_text().splitlines()[-1])
+   baseline_rows=[json.loads(line) for line in (ROOT/f'runs/restore_proto_v1/formal/full/10-5/step{stage}/metrics.jsonl').read_text().splitlines()]
+   b=next(row for row in baseline_rows if row['iteration']==r['iteration'])
+   rows.append([f'Step {stage} / {r["iteration"]}',format(b['all_miou'],'.3f'),format(r['all_miou'],'.3f'),format(r['all_miou']-b['all_miou'],'+.3f'),format(r['prototype_miou'],'.3f'),format(r['cam_miou'],'.3f')+' / '+format(r['auxiliary_cam_miou'],'.3f')])
+  else:rows.append([f'Step {stage} / 待验证','-','-','-','-','-'])
+ result_table(rows,[108,72,72,74,68,117])
 head('判断标准与实验边界')
 text('先检查旧类标签精确率是否提升，并同时检查召回率、覆盖率和错判为负类的数量。再看相同输入协议下的最终分割及旧／新类别表现。若标签更准却分割更差，必须检查筛选是否过强或旧类召回受损，不能只展示标签指标。')
 text('无 OLC 的完整主线 aspect672 主头为 69.8902，固定半原型融合为 70.0644。OLC 不重新搜索融合比例，不追加 1,200 步，不引入同阶段参考模型。只在这些条件一致时讨论新增收益。')

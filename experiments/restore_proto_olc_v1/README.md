@@ -36,3 +36,10 @@ Run from the project root with the configured runtime:
 The runner records source hashes, predecessor hashes and commands, uses the existing GPU reservation guard, and restores reservation after each job or failure. It refuses to overwrite partial runs. The `control` arm uses the new trainer with OLC disabled; the `baseline` arm uses the original trainer for smoke equivalence checking. Formal comparison reuses the completed, identical-budget original full chain only after this equivalence check.
 
 Status: two-stage GPU smoke and two-rank memory tests passed; the formal OLC chain is running. The disabled-OLC smoke differs by 0.00214 mIoU points from baseline; an unchanged-baseline repeat differs by 0.00172 points. Runs are not bitwise deterministic, and no exact-equality claim is made. No OLC segmentation gain is claimed yet. Old ALD extra-refinement results are excluded from this method.
+
+
+## Interim observation (Step 1, 4,000 updates; not a final result)
+
+On the 1,240-image Step-1 validation set with square448 input, OLC main-head mIoU is 73.73630 versus 71.51848 without OLC (+2.21782 points). The prototype head is 72.21866 versus 70.90205 (+1.31661). Old foreground improves by 0.35479 points and current foreground by 6.30342 points. This follows a negative 2,000-step warmup comparison (45.93328 versus 47.08372), so intermediate rankings must not substitute for the completed chain.
+
+The 4,000-step prediction-memory audit gives precision 60.5616%, recall 89.6629%, coverage 98.5023%. Main-head-only decisions from the same EMA give precision 54.3216%, recall 92.5094%. Screening removes false positives but also sacrifices recall. All of these annotations are joined by a separate offline process; they are not training inputs. Two correlated teacher heads can still agree on a wrong class, and crop predictions are not equivalent to whole-image presence labels.
