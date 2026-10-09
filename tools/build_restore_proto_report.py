@@ -260,7 +260,7 @@ page(12,'OLC 是否改善最终分割','12 / 同预算验证与采用条件')
 comparison=ROOT/'runs/restore_proto_olc_v1/comparison.json'
 data=json.loads(comparison.read_text()) if comparison.exists() else {'status':'waiting'}
 if data.get('status')=='complete':
- text('两条完整增量链的预算、主要配置、前驱关系、最终权重哈希、验证图像和融合端点均已核对。下表比较 CPU 同协议结果，单位为 mIoU 百分数；变化列为 OLC 减无 OLC。')
+ text('两条完整增量链的预算、主要配置、前驱关系、最终权重哈希、验证图像和融合端点均已核对。下表比较同一 GPU 上的成对推理结果，单位为 mIoU 百分数；变化列为 OLC 减无 OLC。')
  rows=[['输入 / 预测方式','无 OLC','加 OLC','变化']]
  for mode in ['square448','aspect672']:
   for head_key,label in [('main','主头'),('fixed_half_prototype_fusion','0.5 融合')]:

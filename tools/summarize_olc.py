@@ -1,5 +1,5 @@
 """Read-only status summary backed by live process handles and experiment records."""
-import json
+import json,time
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 CONTROL=ROOT/'runs/restore_proto_olc_v1/control'
@@ -29,6 +29,7 @@ def main():
     for stage in [1,2]:
         d=ROOT/f'runs/restore_proto_olc_v1/formal/olc/10-5/step{stage}'
         r={};records=lines(d/'olc_metrics.jsonl')
+        if (d/'train.log').exists():r['training_log_age_seconds']=time.time()-(d/'train.log').stat().st_mtime
         if records:r['last_logged_iteration']=records[-1]['iteration'];r['memory_images']=records[-1]['memory_images']
         metrics=lines(d/'metrics.jsonl')
         baseline={m['iteration']:m for m in lines(ROOT/f'runs/restore_proto_v1/formal/full/10-5/step{stage}/metrics.jsonl')}
@@ -39,5 +40,7 @@ def main():
         r['final_checkpoint_present']=(d/'checkpoints/model_final.pth').exists()
         result['stages'][str(stage)]=r
     result['postprocess']=read(CONTROL/'postprocess_state.json')
+    post_launch=read(CONTROL/'postprocess_launch.json') or {}
+    result['postprocess_live']=live(post_launch.get('pid'),'tools/monitor_olc_results.py')
     print(json.dumps(result,ensure_ascii=False))
 if __name__=='__main__':main()

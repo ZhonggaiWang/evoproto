@@ -1,16 +1,28 @@
 """Audit online prediction snapshots and evaluate the completed same-budget chain."""
-import hashlib,json,os,subprocess,sys,time
+import hashlib,json,os,signal,subprocess,sys,time
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 import torch
 CONTROL=ROOT/'runs/restore_proto_olc_v1/control'
 FORMAL=ROOT/'runs/restore_proto_olc_v1/formal/olc/10-5'
+from experiments.restore_proto_v1.run import reserve,UUIDS
+child=None
+reserved_for_evaluation=False
 
 def write(path,value):
     assert path.resolve().is_relative_to(ROOT)
     tmp=path.with_suffix('.tmp');tmp.write_text(json.dumps(value,indent=2));tmp.replace(path)
 
+def stop(*unused):
+    global child
+    if child is not None and child.poll() is None:
+        os.killpg(child.pid,signal.SIGTERM)
+        try:child.wait(timeout=20)
+        except subprocess.TimeoutExpired:os.killpg(child.pid,signal.SIGKILL);child.wait()
+    raise KeyboardInterrupt
+
 def main():
+    global child,reserved_for_evaluation
     env=dict(os.environ,CUDA_VISIBLE_DEVICES='',PYTHONDONTWRITEBYTECODE='1',OMP_NUM_THREADS='8')
     while True:
         state=json.loads((CONTROL/'runner_state.json').read_text())
@@ -39,16 +51,46 @@ def main():
                 print('CHECKPOINT_AUDIT',stage,flush=True)
         if state['status']=='completed':break
         time.sleep(30)
-    d=FORMAL/'step2';output=d/'fusion_evaluation.json'
-    if not output.exists():
-        cmd=[sys.executable,'-B',str(ROOT/'tools/evaluate_restore_proto_fusion.py'),'--checkpoint',str(d/'checkpoints/model_final.pth'),'--stage','2','--output',str(output),'--device','cpu','--threads','8']
-        write(CONTROL/'postprocess_state.json',dict(status='fusion_running',pid=os.getpid(),time=time.time()))
-        with (d/'fusion_evaluation.log').open('a') as f:subprocess.run(cmd,cwd=ROOT,env=env,stdout=f,stderr=subprocess.STDOUT,check=True)
+    # Wait for the formal runner's final reservation restoration to finish.
+    runner=json.loads((CONTROL/'formal_launch.json').read_text())['pid']
+    while True:
+        try:running=b'restore_proto_olc_v1/run.py' in Path(f'/proc/{runner}/cmdline').read_bytes()
+        except OSError:running=False
+        if not running:break
+        time.sleep(1)
+    guard=json.loads((ROOT/'runs/restore_proto_v1/control/reservation_state.json').read_text())
+    for line in subprocess.check_output(['nvidia-smi','--query-compute-apps=gpu_uuid,pid','--format=csv,noheader'],text=True).splitlines():
+        uuid,pid=map(str.strip,line.split(','))
+        if uuid in UUIDS.split(','):assert int(pid)==guard['pid'],line
+    reserve('training');reserved_for_evaluation=True
+    gpu_env=dict(env,CUDA_VISIBLE_DEVICES=UUIDS)
+    jobs=[('reference',ROOT/'runs/restore_proto_v1/formal/full/10-5/step2/checkpoints/model_final.pth',ROOT/'runs/restore_proto_olc_v1/reference_full_gpu/fusion_evaluation.json'),
+          ('olc',FORMAL/'step2/checkpoints/model_final.pth',FORMAL/'step2/fusion_evaluation.json')]
+    for name,checkpoint,output in jobs:
+        if output.exists():
+            existing=json.loads(output.read_text())
+            assert existing['device']=='cuda:0' and existing['checkpoint_sha256']==hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+            continue
+        output.parent.mkdir(parents=True,exist_ok=True)
+        cmd=[sys.executable,'-B',str(ROOT/'tools/evaluate_restore_proto_fusion.py'),'--checkpoint',str(checkpoint),'--stage','2','--output',str(output),'--device','cuda:0','--threads','4']
+        write(CONTROL/'postprocess_state.json',dict(status='paired_gpu_fusion_running',arm=name,pid=os.getpid(),time=time.time()))
+        with output.with_suffix('.log').open('a') as f:
+            child=subprocess.Popen(cmd,cwd=ROOT,env=gpu_env,stdout=f,stderr=subprocess.STDOUT,start_new_session=True)
+            if child.wait()!=0:raise RuntimeError('Fusion evaluation failed: '+name)
+    subprocess.run([sys.executable,'-B',str(ROOT/'tools/compare_olc_results.py')],cwd=ROOT,env=env,check=True)
+    assert json.loads((ROOT/'runs/restore_proto_olc_v1/comparison.json').read_text())['status']=='complete'
     write(CONTROL/'postprocess_state.json',dict(status='completed',time=time.time()))
     print('OLC_POSTPROCESS_COMPLETED',flush=True)
 
 if __name__=='__main__':
     torch.set_num_threads(2)
+    signal.signal(signal.SIGTERM,stop);signal.signal(signal.SIGINT,stop)
     try:main()
     except BaseException as e:
         write(CONTROL/'postprocess_state.json',dict(status='failed',error=repr(e),time=time.time()));raise
+    finally:
+        if child is not None and child.poll() is None:
+            os.killpg(child.pid,signal.SIGTERM)
+            try:child.wait(timeout=20)
+            except subprocess.TimeoutExpired:os.killpg(child.pid,signal.SIGKILL);child.wait()
+        if reserved_for_evaluation:reserve('reserve')

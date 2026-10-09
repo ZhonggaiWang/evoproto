@@ -13,13 +13,14 @@ def read(path):return json.loads(path.read_text())
 def write(value):
     temp=OUTPUT.with_suffix('.tmp');temp.write_text(json.dumps(value,indent=2));temp.replace(OUTPUT)
 
-def load_final(directory):
-    official=read(directory/'evaluation.json');fusion=read(directory/'fusion_evaluation.json');receipt=read(directory/'final_receipt.json')
+def load_final(directory,fusion_directory=None):
+    fusion_directory=directory if fusion_directory is None else fusion_directory
+    official=read(directory/'evaluation.json');fusion=read(fusion_directory/'fusion_evaluation.json');receipt=read(directory/'final_receipt.json')
     assert official['checkpoint_sha256']==fusion['checkpoint_sha256']==receipt['sha256']
     assert official['images']==fusion['images']==1449 and official['stage']==fusion['stage']==2
     assert official['histogram_label_dtype']=='int64' and not official['prediction_uses_gt_tags'] and not fusion['image_tags_used']
     hist={};difference={}
-    with np.load(directory/'fusion_evaluation.npz',allow_pickle=False) as arrays:
+    with np.load(fusion_directory/'fusion_evaluation.npz',allow_pickle=False) as arrays:
         names=arrays['names'].copy();alphas=list(arrays['alphas'])
         assert len(names)==len(set(names))==1449
         assert alphas==fusion['alphas'] and all(a in alphas for a in [0.,.5,1.])
@@ -38,8 +39,8 @@ def load_final(directory):
                 difference[mode][head]=delta
             hist[mode]={str(a):arrays[mode][:,alphas.index(a)].copy() for a in [0.,.5]}
     verification=dict(checkpoint_sha256=receipt['sha256'],images=1449,per_image_histograms_verified=True,fusion_minus_standalone_miou=difference,standalone_device=official.get('device','cuda'),endpoint_tolerance_pp=.01)
-    if directory==CANDIDATE/'step2':
-        (directory/'fusion_verification.json').write_text(json.dumps(verification,indent=2))
+    if directory==CANDIDATE/'step2' or fusion_directory!=directory:
+        (fusion_directory/'fusion_verification.json').write_text(json.dumps(verification,indent=2))
     return names,hist,official,fusion
 
 def main():
@@ -51,6 +52,8 @@ def main():
                 needed.append(root/f'step{stage}'/name)
         for name in ['evaluation.json','fusion_evaluation.json','fusion_evaluation.npz']:
             needed.append(root/'step2'/name)
+    reference_gpu=ROOT/'runs/restore_proto_olc_v1/reference_full_gpu'
+    needed.extend([reference_gpu/'fusion_evaluation.json',reference_gpu/'fusion_evaluation.npz'])
     for stage in [1,2]:needed.append(CANDIDATE/f'step{stage}/olc_label_audit_8000.json')
     missing=[str(x.relative_to(ROOT)) for x in needed if not x.exists()]
     if missing:
@@ -76,8 +79,9 @@ def main():
         metrics={name:{row['iteration']:row for row in map(json.loads,(path/'metrics.jsonl').read_text().splitlines())} for name,path in [('baseline',bd),('olc',cd)]}
         assert max(metrics['baseline'])==max(metrics['olc'])==8000
         learning[str(stage)]={str(i):dict(baseline_main=metrics['baseline'][i]['all_miou'],olc_main=r['all_miou'],delta_pp=r['all_miou']-metrics['baseline'][i]['all_miou'],olc_prototype=r['prototype_miou'],olc_cam=r['cam_miou'],olc_auxiliary_cam=r['auxiliary_cam_miou']) for i,r in metrics['olc'].items() if i in metrics['baseline']}
-    bn,bh,bo,bf=load_final(BASE/'step2');cn,ch,co,cf=load_final(CANDIDATE/'step2')
+    bn,bh,bo,bf=load_final(BASE/'step2',reference_gpu);cn,ch,co,cf=load_final(CANDIDATE/'step2')
     assert np.array_equal(bn,cn)
+    assert bf['device']==cf['device']=='cuda:0'
     comparisons={}
     for mode in ['square448','aspect672']:
         comparisons[mode]={}
@@ -86,6 +90,6 @@ def main():
             comparison=paired_bootstrap(bh[mode][alpha],ch[mode][alpha],a.samples)
             comparison.update(baseline_miou=b['miou'],olc_miou=c['miou'],old_delta_pp=c['previous_foreground']-b['previous_foreground'],new_delta_pp=c['current_foreground']-b['current_foreground'],class_delta_pp=[cv-bv for bv,cv in zip(b['class_iou'],c['class_iou'])])
             comparisons[mode][name]=comparison
-    result=dict(status='complete',same_budget_verified=True,iterations_per_stage=8000,global_batch=8,seed=0,own_predecessor_lineage=lineage,learning_curves=learning,comparisons= comparisons,final_label_audits={str(s):read(CANDIDATE/f'step{s}/olc_label_audit_8000.json') for s in [1,2]},limitations='Single seed and adaptively inspected VOC validation set. Paired bootstrap measures image-sampling uncertainty, not training-seed variance. Fusion alpha 0.5 was fixed before OLC. CAM diagnostics use validation image tags, whereas segmentation does not. Offline label metrics do not supervise training.')
+    result=dict(status='complete',same_budget_verified=True,paired_inference_device='cuda:0 (physical GPU 5)',iterations_per_stage=8000,global_batch=8,seed=0,own_predecessor_lineage=lineage,learning_curves=learning,comparisons= comparisons,final_label_audits={str(s):read(CANDIDATE/f'step{s}/olc_label_audit_8000.json') for s in [1,2]},limitations='Single seed and adaptively inspected VOC validation set. Paired bootstrap measures image-sampling uncertainty, not training-seed variance. Fusion alpha 0.5 was fixed before OLC. CAM diagnostics use validation image tags, whereas segmentation does not. Offline label metrics do not supervise training.')
     write(result);print(json.dumps({'status':'complete','comparisons':comparisons}))
 if __name__=='__main__':main()
