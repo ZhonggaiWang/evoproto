@@ -11,7 +11,7 @@ def miou(h):
 def main():
  manifest=read(F/'manifest.json')
  for p,h in manifest['source_sha256'].items():
-  if p=='experiments/restore_proto_simplekd_v1/finish.py':
+  if sha(ROOT/p)!=h and p=='experiments/restore_proto_simplekd_v1/finish.py':
    repair=read(C/'analysis_helper_repair.json')
    assert repair['original_sha256']==h and sha(ROOT/p)==repair['repaired_sha256']
   else:assert sha(ROOT/p)==h,p
