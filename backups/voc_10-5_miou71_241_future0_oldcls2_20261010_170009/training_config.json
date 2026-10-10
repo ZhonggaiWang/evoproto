@@ -1,0 +1,41 @@
+{
+  "configuration": {
+    "task": "10-5",
+    "future_class_label": 0,
+    "old_cls_threshold": 2.0,
+    "ald_threshold": 0.0,
+    "seg_loss_type": "cross_entropy",
+    "w_seg": 0.2,
+    "proto_sep_mode": "hinge",
+    "proto_margin": 0.0,
+    "w_proto_sep": 0.1,
+    "proto_kd_mode": "direction",
+    "cpa_skip_background": true,
+    "w_proto_kd": 0.1,
+    "confusion_temperature": 0.5,
+    "confusion_start_iter": 4000,
+    "confusion_interval": 2000,
+    "warmup_iters": 2000,
+    "loss_warmup_iters": 2000,
+    "stage_learning_rates": {
+      "0": 6e-05,
+      "1": 2e-05,
+      "2": 2e-05
+    },
+    "stage_iterations": {
+      "0": 20000,
+      "1": 8000,
+      "2": 8000
+    },
+    "proto_temperature_initial": 0.01,
+    "layer_decay_incremental": 0.9,
+    "seg_tta_fusion": "flip_mean_scale_mean_logits"
+  },
+  "reference_result": {
+    "step": 2,
+    "iteration": 4000,
+    "all_miou": 71.24130728276876,
+    "old_miou": 76.98822503561355,
+    "new_miou": 63.51020841435617
+  }
+}
