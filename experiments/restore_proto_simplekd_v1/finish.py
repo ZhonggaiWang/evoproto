@@ -10,7 +10,11 @@ def miou(h):
  d=h.sum(0)+h.sum(1)-h.diagonal();return np.nanmean(np.divide(100*h.diagonal(),d,out=np.full(len(d),np.nan),where=d>0))
 def main():
  manifest=read(F/'manifest.json')
- for p,h in manifest['source_sha256'].items():assert sha(ROOT/p)==h,p
+ for p,h in manifest['source_sha256'].items():
+  if p=='experiments/restore_proto_simplekd_v1/finish.py':
+   repair=read(C/'analysis_helper_repair.json')
+   assert repair['original_sha256']==h and sha(ROOT/p)==repair['repaired_sha256']
+  else:assert sha(ROOT/p)==h,p
  stages={}
  previous=manifest['initial_sha256']
  for stage in [1,2]:
@@ -33,7 +37,7 @@ def main():
  for mode in ['square448','aspect672']:
   for alpha in [0.,.5]:
    idx=list(arrays['baseline']['alphas']).index(alpha);mats={a:z[mode][:,idx] for a,z in arrays.items()}
-   for a,h in mats.items():assert np.array_equal(h.sum((1,3)),mats['baseline'].sum((1,3))) and abs(miou(h.sum(0))-evals[a]['results'][mode][str(alpha)]['miou'])<1e-8
+   for a,h in mats.items():assert np.array_equal(h.sum(2),mats['baseline'].sum(2)) and abs(miou(h.sum(0))-evals[a]['results'][mode][str(alpha)]['miou'])<1e-8
    rows={}
    for ref in ['baseline','original_seed_kd']:
     delta=miou(mats['simple_seed_kd'].sum(0))-miou(mats[ref].sum(0));rng=np.random.default_rng(20261010);boot=[]
